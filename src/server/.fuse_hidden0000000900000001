@@ -1,0 +1,171 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { readStore, writeStore } from "./content-store";
+
+function value(formData: FormData, key: string, fallback = "") {
+  const v = formData.get(key);
+  return typeof v === "string" && v.trim().length ? v.trim() : fallback;
+}
+
+function indexValue(formData: FormData, key: string) {
+  const raw = formData.get(key);
+  const index = typeof raw === "string" ? Number(raw) : Number.NaN;
+  return Number.isInteger(index) && index >= 0 ? index : -1;
+}
+
+/** Guarda los ajustes del sitio (contacto, marca, redes). */
+export async function saveSettings(formData: FormData) {
+  const cur = readStore().site;
+
+  const site = {
+    ...cur,
+    brandName: value(formData, "brandName", cur.brandName),
+    tagline: value(formData, "tagline", cur.tagline),
+    whatsappNumber: value(formData, "whatsappNumber", cur.whatsappNumber),
+    whatsappDisplay: value(formData, "whatsappDisplay", cur.whatsappDisplay),
+    email: value(formData, "email", cur.email),
+    nationalLine: value(formData, "nationalLine", cur.nationalLine),
+    address: value(formData, "address", cur.address),
+    city: value(formData, "city", cur.city),
+    hours: value(formData, "hours", cur.hours),
+    socials: {
+      facebook: String(formData.get("facebook") ?? ""),
+      instagram: String(formData.get("instagram") ?? ""),
+      linkedin: String(formData.get("linkedin") ?? ""),
+      youtube: String(formData.get("youtube") ?? ""),
+    },
+  };
+
+  await writeStore({ site });
+  // Refresca el sitio público y el propio panel.
+  revalidatePath("/", "layout");
+  redirect("/admin/ajustes?saved=1");
+}
+
+export async function saveInsurer(formData: FormData) {
+  const store = readStore();
+  const insurers = [...store.insurers];
+  const index = indexValue(formData, "index");
+  const insurer = {
+    name: value(formData, "name", index >= 0 ? insurers[index]?.name : ""),
+    logo: value(formData, "logo", index >= 0 ? insurers[index]?.logo : ""),
+  };
+
+  if (!insurer.name || !insurer.logo) redirect("/admin/aseguradoras?error=1");
+  if (index >= 0 && insurers[index]) insurers[index] = insurer;
+  else insurers.push(insurer);
+
+  await writeStore({ insurers });
+  revalidatePath("/", "layout");
+  redirect("/admin/aseguradoras?saved=1");
+}
+
+export async function deleteInsurer(formData: FormData) {
+  const index = indexValue(formData, "index");
+  const insurers = readStore().insurers.filter((_, i) => i !== index);
+  await writeStore({ insurers });
+  revalidatePath("/", "layout");
+  redirect("/admin/aseguradoras?saved=1");
+}
+
+export async function saveFaqItem(formData: FormData) {
+  const store = readStore();
+  const faq = store.faq.map((cat) => ({ ...cat, faqs: [...cat.faqs] }));
+  const categoryIndex = indexValue(formData, "categoryIndex");
+  const itemIndex = indexValue(formData, "itemIndex");
+  const categoryLabel = value(formData, "category", categoryIndex >= 0 ? faq[categoryIndex]?.label : "General");
+  const item = {
+    q: value(formData, "q", itemIndex >= 0 ? faq[categoryIndex]?.faqs[itemIndex]?.q : ""),
+    a: value(formData, "a", itemIndex >= 0 ? faq[categoryIndex]?.faqs[itemIndex]?.a : ""),
+  };
+
+  if (!item.q || !item.a) redirect("/admin/faq?error=1");
+  let targetIndex = faq.findIndex((cat) => cat.label === categoryLabel);
+  if (targetIndex < 0) {
+    faq.push({ label: categoryLabel, faqs: [] });
+    targetIndex = faq.length - 1;
+  }
+  if (categoryIndex >= 0 && categoryIndex !== targetIndex && itemIndex >= 0) {
+    faq[categoryIndex]?.faqs.splice(itemIndex, 1);
+  }
+  const targetItems = faq[targetIndex].faqs;
+  if (categoryIndex === targetIndex && itemIndex >= 0 && targetItems[itemIndex]) targetItems[itemIndex] = item;
+  else targetItems.push(item);
+
+  await writeStore({ faq });
+  revalidatePath("/", "layout");
+  redirect("/admin/faq?saved=1");
+}
+
+export async function deleteFaqItem(formData: FormData) {
+  const categoryIndex = indexValue(formData, "categoryIndex");
+  const itemIndex = indexValue(formData, "itemIndex");
+  const faq = readStore().faq.map((cat, i) => ({
+    ...cat,
+    faqs: i === categoryIndex ? cat.faqs.filter((_, idx) => idx !== itemIndex) : cat.faqs,
+  }));
+  await writeStore({ faq });
+  revalidatePath("/", "layout");
+  redirect("/admin/faq?saved=1");
+}
+
+export async function saveBlogArticle(formData: FormData) {
+  const store = readStore();
+  const blog = [...store.blog];
+  const id = value(formData, "id", "");
+  const existingIndex = id ? blog.findIndex((article) => article.id === id) : -1;
+  const current = existingIndex >= 0 ? blog[existingIndex] : undefined;
+  const article = {
+    id: id || String(Date.now()),
+    title: value(formData, "title", current?.title),
+    excerpt: value(formData, "excerpt", current?.excerpt),
+    category: value(formData, "category", current?.category ?? "Consejos"),
+    date: value(formData, "date", current?.date ?? new Intl.DateTimeFormat("es-CO", { day: "numeric", month: "short", year: "numeric" }).format(new Date())),
+    readTime: value(formData, "readTime", current?.readTime ?? "5 min"),
+    img_url: value(formData, "img_url", current?.img_url),
+    featured: formData.get("featured") === "on",
+  };
+
+  if (!article.title || !article.excerpt || !article.img_url) redirect("/admin/blog?error=1");
+  if (existingIndex >= 0) blog[existingIndex] = article;
+  else blog.unshift(article);
+
+  await writeStore({ blog });
+  revalidatePath("/", "layout");
+  redirect("/admin/blog?saved=1");
+}
+
+export async function deleteBlogArticle(formData: FormData) {
+  const id = value(formData, "id");
+  const blog = readStore().blog.filter((article) => article.id !== id);
+  await writeStore({ blog });
+  revalidatePath("/", "layout");
+  redirect("/admin/blog?saved=1");
+}
+
+export async function saveInsuranceBasics(formData: FormData) {
+  const store = readStore();
+  const slug = value(formData, "slug");
+  const current = store.insurance[slug];
+  if (!current) redirect("/admin/seguros?error=1");
+
+  const insurance = {
+    ...store.insurance,
+    [slug]: {
+      ...current,
+      label: value(formData, "label", current.label),
+      subtitle: value(formData, "subtitle", current.subtitle),
+      tagline: value(formData, "tagline", current.tagline),
+      heroBadge: value(formData, "heroBadge", current.heroBadge),
+      heroDesc: value(formData, "heroDesc", current.heroDesc),
+      img_url: value(formData, "img_url", current.img_url),
+      heroImg_url: value(formData, "heroImg_url", current.heroImg_url),
+    },
+  };
+
+  await writeStore({ insurance });
+  revalidatePath("/", "layout");
+  redirect("/admin/seguros?saved=1");
+}

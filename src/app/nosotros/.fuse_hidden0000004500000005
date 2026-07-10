@@ -1,0 +1,347 @@
+"use client";
+
+import Link from "next/link";
+import { Target, Eye, Heart, ArrowRight, CheckCircle2, Award, Users, TrendingUp, ShieldCheck, Handshake, Star, BookOpen } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { QuoterGate } from "@/components/site/QuoterGate";
+import { Reveal, WordHighlight, GlowOrbs } from "@/components/motion";
+import { Eyebrow } from "@/components/site/Eyebrow";
+import { DotGrid } from "@/components/site/DotGrid";
+
+const values = [
+  {
+    icon: ShieldCheck,
+    title: "Ética",
+    desc: "Actuamos con honestidad e integridad en cada interacción, poniendo siempre los intereses del cliente primero.",
+  },
+  {
+    icon: Award,
+    title: "Profesionalismo",
+    desc: "Contamos con personal idóneo y capacitado para brindar asesoría de la más alta calidad.",
+  },
+  {
+    icon: CheckCircle2,
+    title: "Cumplimiento",
+    desc: "Honramos nuestros compromisos y cumplimos con los estándares más exigentes del sector asegurador.",
+  },
+  {
+    icon: Heart,
+    title: "Respeto",
+    desc: "Valoramos la confianza que cada cliente deposita en nosotros y la tratamos con la mayor consideración.",
+  },
+  {
+    icon: Handshake,
+    title: "Trabajo en Equipo",
+    desc: "Colaboramos juntos para ofrecer soluciones integrales que protejan el patrimonio de nuestros clientes.",
+  },
+];
+
+const milestones = [
+  {
+    year: "1993",
+    event: "Fundación de Llano Seguros Ltda. en Colombia por Jorge Enrique Tique G., con la misión de ofrecer asesoría íntegra y transparente.",
+  },
+  {
+    year: "2000",
+    event: "Consolidación de alianzas estratégicas con las principales aseguradoras del país: Sura, Bolívar, Allianz y más.",
+  },
+  {
+    year: "2010",
+    event: "Expansión del portafolio de servicios a seguros empresariales, de vida y salud para personas y compañías.",
+  },
+  {
+    year: "2015",
+    event: "Reconocimiento por excelencia en servicio al cliente y renovación de alianzas con aseguradoras líderes nacionales.",
+  },
+  {
+    year: "2020",
+    event: "Más de 27 años protegiendo el patrimonio de familias y empresas colombianas con ética y profesionalismo.",
+  },
+  {
+    year: "2025",
+    event: "Más de 30 años de trayectoria. Referentes nacionales en asesoría integral de seguros con los más altos estándares de calidad y confianza.",
+  },
+];
+
+const partners = [
+  { name: "Sura", color: "#003087" },
+  { name: "Allianz", color: "#003781" },
+  { name: "AXA Colpatria", color: "#00008F" },
+  { name: "Mapfre", color: "#CC0000" },
+  { name: "Seguros Bolívar", color: "#00813D" },
+  { name: "Liberty Seguros", color: "#F4A900" },
+  { name: "SBS Seguros", color: "#E63329" },
+  { name: "HDI Seguros", color: "#005792" },
+  { name: "Seguros del Estado", color: "#1A3A6B" },
+  { name: "Solidaria", color: "#5C2D91" },
+  { name: "Previsora", color: "#1A6B3C" },
+  { name: "Equidad", color: "#D4782A" },
+];
+
+export default function Nosotros() {
+  return (
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <Navbar />
+
+      {/* Hero */}
+      <section className="relative py-24 md:py-32 text-center overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img className="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_ec76f08fed_7a99fcbc8bdb0b95.png" alt="Colombian insurance brokers shaking hands in a modern professional office, team of advisors, warm an" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0057B8]/85 via-[#1F2937]/70 to-[#0057B8]/60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1F2937]/70 via-transparent to-transparent" />
+        </div>
+        <DotGrid className="z-[1]" opacity={0.4} />
+        <GlowOrbs className="z-[1]" />
+        <div className="container-wide relative z-10">
+          <Reveal className="mb-5 flex justify-center">
+            <Eyebrow label="Nuestra historia" icon={BookOpen} tone="dark" />
+          </Reveal>
+          <Reveal delay={0.1}>
+            <h1 className="font-manrope font-extrabold text-5xl md:text-6xl text-white mb-5 leading-tight drop-shadow-md">
+              <WordHighlight
+                text="Más de 30 años **construyendo confianza**"
+                highlightClassName="text-[#4DA3FF] underline decoration-[#4DA3FF]/40 underline-offset-[8px] decoration-4"
+              />
+            </h1>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <p className="text-white/80 font-inter text-lg max-w-2xl mx-auto leading-relaxed">
+              Somos una correduría de seguros comprometida con ofrecerte la mejor protección, con la más alta ética y el mejor servicio desde 1993.
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Founder Story */}
+      <section className="section-padding bg-white">
+        <div className="container-wide">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+              <span className="inline-flex items-center gap-2 bg-blue-50 text-[#0057B8] text-sm font-inter font-semibold px-4 py-2 rounded-full mb-5">
+                <BookOpen className="w-4 h-4" /> Nuestra fundación
+              </span>
+              <h2 className="font-manrope font-extrabold text-3xl md:text-4xl text-[#1F2937] mb-5 leading-tight">
+                Una historia de dedicación y confianza
+              </h2>
+              <p className="text-gray-500 font-inter leading-relaxed mb-4">
+                <strong className="text-[#1F2937]">Llano Seguros Ltda.</strong> fue fundada en <strong className="text-[#0057B8]">1993</strong> por <strong className="text-[#1F2937]">Jorge Enrique Tique G.</strong>, con una visión clara: ofrecer a las familias y empresas colombianas una asesoría en seguros íntegra, transparente y verdaderamente personalizada.
+              </p>
+              <p className="text-gray-500 font-inter leading-relaxed mb-4">
+                Desde nuestros inicios, hemos trabajado con un equipo de profesionales idóneos, comprometidos con entender las necesidades reales de cada cliente y brindarle soluciones que protejan su patrimonio de manera efectiva.
+              </p>
+              <p className="text-gray-500 font-inter leading-relaxed">
+                Hoy, con más de <strong className="text-[#0057B8]">30 años de experiencia</strong>, somos referentes nacionales en asesoría integral de seguros, respaldados por las principales aseguradoras del país.
+              </p>
+            </div>
+            <div className="relative">
+              <div className="bg-[#F8FAFC] rounded-2xl border border-[#E6E9ED] p-8 relative z-10">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-16 h-16 bg-[#0057B8] rounded-2xl flex items-center justify-center shrink-0">
+                    <span className="text-white font-manrope font-extrabold text-xl">LS</span>
+                  </div>
+                  <div>
+                    <div className="font-manrope font-extrabold text-[#1F2937] text-xl">Llano Seguros Ltda.</div>
+                    <div className="text-[#0057B8] font-inter text-sm font-medium">Fundada en 1993</div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { val: "1993", label: "Año de fundación" },
+                    { val: "+30", label: "Años de experiencia" },
+                    { val: "12", label: "Aseguradoras aliadas" },
+                    { val: "100%", label: "Compromiso con el cliente" },
+                  ].map(({ val, label }) => (
+                    <div key={label} className="bg-white rounded-xl border border-[#E6E9ED] p-4 text-center">
+                      <div className="font-manrope font-extrabold text-2xl text-[#0057B8] mb-1">{val}</div>
+                      <div className="text-gray-500 text-xs font-inter">{label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#0057B8]/10 rounded-2xl z-0" />
+              <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-[#1F2937]/10 rounded-2xl z-0" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Mission & Vision */}
+      <section className="section-padding bg-[#F8FAFC]">
+        <div className="container-wide">
+          <div className="text-center mb-12">
+            <h2 className="font-manrope font-extrabold text-4xl text-[#1F2937] mb-3">Misión y Visión</h2>
+            <p className="text-gray-500 font-inter text-lg">Los pilares que guían nuestro trabajo cada día</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Mission */}
+            <div className="bg-white rounded-2xl border border-[#E6E9ED] p-8 shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-[#0057B8]" />
+              <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-6">
+                <Target className="w-7 h-7 text-[#0057B8]" />
+              </div>
+              <span className="inline-flex items-center gap-1.5 text-xs font-inter font-semibold text-[#0057B8] bg-blue-50 px-3 py-1 rounded-full mb-4">
+                Nuestra Misión
+              </span>
+              <h3 className="font-manrope font-bold text-xl text-[#1F2937] mb-4 leading-snug">
+                Asesoría íntegra para proteger tu patrimonio
+              </h3>
+              <p className="text-gray-500 font-inter leading-relaxed text-base italic border-l-4 border-[#0057B8] pl-4">
+                "Ofrecer una asesoría íntegra y transparente con personal idóneo, buscando dar solución a las necesidades de nuestros clientes para la protección de su patrimonio."
+              </p>
+            </div>
+            {/* Vision */}
+            <div className="bg-[#1F2937] rounded-2xl border border-[#1F2937] p-8 shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-blue-400" />
+              <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mb-6">
+                <Eye className="w-7 h-7 text-blue-300" />
+              </div>
+              <span className="inline-flex items-center gap-1.5 text-xs font-inter font-semibold text-blue-300 bg-white/10 px-3 py-1 rounded-full mb-4">
+                Nuestra Visión
+              </span>
+              <h3 className="font-manrope font-bold text-xl text-white mb-4 leading-snug">
+                Reconocidos a nivel nacional por nuestra calidad
+              </h3>
+              <p className="text-white/70 font-inter leading-relaxed text-base italic border-l-4 border-blue-400 pl-4">
+                "Ser reconocidos a nivel nacional por nuestra asesoría integral, cumpliendo con los mejores estándares de calidad y confianza."
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section className="gradient-brand py-14">
+        <div className="container-wide">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {[
+              { icon: Users, val: "1993", label: "Año de fundación" },
+              { icon: TrendingUp, val: "+12", label: "Aseguradoras aliadas" },
+              { icon: Award, val: "+30", label: "Años de experiencia" },
+              { icon: CheckCircle2, val: "100%", label: "Compromiso ético" },
+            ].map(({ icon: Icon, val, label }) => (
+              <div key={label}>
+                <Icon className="w-7 h-7 text-blue-200 mx-auto mb-2" />
+                <div className="font-manrope font-extrabold text-3xl text-white mb-1">{val}</div>
+                <div className="text-blue-200 text-sm font-inter">{label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Values */}
+      <section className="section-padding bg-white">
+        <div className="container-wide">
+          <div className="text-center mb-12">
+            <span className="inline-block bg-blue-50 text-[#0057B8] text-sm font-inter font-semibold px-4 py-1.5 rounded-full mb-4">
+              Lo que nos define
+            </span>
+            <h2 className="font-manrope font-extrabold text-4xl text-[#1F2937] mb-3">Nuestros valores</h2>
+            <p className="text-gray-500 font-inter text-lg">Los principios que guían cada decisión que tomamos</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {values.map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="bg-[#F8FAFC] rounded-2xl p-6 border border-[#E6E9ED] shadow-sm text-center hover:border-[#0057B8]/30 hover:shadow-md transition-all duration-300">
+                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Icon className="w-6 h-6 text-[#0057B8]" />
+                </div>
+                <h3 className="font-manrope font-bold text-[#1F2937] mb-2 text-base">{title}</h3>
+                <p className="text-gray-500 text-sm font-inter leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Timeline */}
+      <section className="section-padding bg-[#F8FAFC]">
+        <div className="container-wide">
+          <div className="text-center mb-12">
+            <h2 className="font-manrope font-extrabold text-4xl text-[#1F2937] mb-3">Nuestra historia</h2>
+            <p className="text-gray-500 font-inter text-lg">Un camino de más de 30 años de crecimiento y confianza</p>
+          </div>
+          <div className="max-w-2xl mx-auto">
+            {milestones.map(({ year, event }, i) => (
+              <div key={year} className="flex gap-5 mb-6 last:mb-0">
+                <div className="flex flex-col items-center">
+                  <div className="w-12 h-12 rounded-full bg-[#0057B8] flex items-center justify-center shrink-0 shadow-md shadow-blue-900/20">
+                    <span className="text-white text-xs font-bold font-inter">{year.slice(2)}</span>
+                  </div>
+                  {i < milestones.length - 1 && <div className="w-0.5 flex-1 bg-[#E6E9ED] mt-2" />}
+                </div>
+                <div className="pb-6 flex-1">
+                  <div className="font-manrope font-bold text-[#0057B8] text-sm mb-1">{year}</div>
+                  <p className="text-gray-600 font-inter text-sm leading-relaxed">{event}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Partners Banner (Infinite Scroll) */}
+      <section className="bg-white border-y border-[#E6E9ED] py-10 overflow-hidden">
+        <div className="container-wide mb-6 text-center">
+          <h2 className="font-manrope font-extrabold text-2xl text-[#1F2937] mb-2">Nuestras aseguradoras aliadas</h2>
+          <p className="text-gray-500 font-inter text-sm">
+            Trabajamos con las principales aseguradoras del mercado colombiano para ofrecerte las mejores coberturas
+          </p>
+        </div>
+        <div className="relative w-full overflow-hidden">
+          <div className="absolute left-0 top-0 h-full w-20 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 h-full w-20 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+          <div
+            className="flex items-center gap-0"
+            style={{
+              animation: "partners-scroll 36s linear infinite",
+              width: "max-content",
+            }}
+          >
+            {[...partners, ...partners].map((p, i) => (
+              <div key={i} className="flex items-center gap-3 mx-8 shrink-0">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-manrope font-extrabold text-xs shrink-0"
+                  style={{ backgroundColor: p.color }}
+                >
+                  {p.name.split(" ")[0].substring(0, 3).toUpperCase()}
+                </div>
+                <span className="font-manrope font-bold text-base text-gray-500 whitespace-nowrap">
+                  {p.name}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-[#0057B8] py-16">
+        <div className="container-wide text-center">
+          <h2 className="font-manrope font-extrabold text-4xl text-white mb-4">
+            ¿Listo para proteger lo que más valoras?
+          </h2>
+          <p className="text-blue-200 font-inter text-lg mb-8 max-w-xl mx-auto">
+            Contáctanos hoy y uno de nuestros asesores especializados te brindará la orientación que necesitas.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <QuoterGate><Link href="/cotizar">
+              <Button className="bg-white text-[#0057B8] hover:bg-blue-50 rounded-xl px-8 h-12 text-base font-inter font-semibold shadow-lg transition-all duration-300 hover:scale-105">
+                Cotizar ahora <ArrowRight className="ml-2 w-4 h-4" />
+              </Button>
+            </Link></QuoterGate>
+            <Link href="/contacto">
+              <Button variant="outline" className="bg-transparent border-white/50 text-white hover:bg-white/10 rounded-xl px-8 h-12 text-base font-inter transition-all duration-300">
+                Contáctanos <ArrowRight className="ml-2 w-4 h-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

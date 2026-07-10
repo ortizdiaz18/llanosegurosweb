@@ -1,0 +1,354 @@
+"use client";
+
+import Link from "next/link";
+import { waUrl } from "@/lib/whatsapp";
+import {
+  Heart, CheckCircle2, ArrowRight, Phone, ShieldCheck, ChevronRight,
+  Star, Clock, BadgeCheck, LifeBuoy, Zap, Users, DollarSign, FileText, TrendingUp,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { QuoterGate } from "@/components/site/QuoterGate";
+import { motion, useInView, useScroll, useTransform, type Variants } from "framer-motion";
+import { StatCounter } from "@/components/motion";
+import { DotGrid } from "@/components/site/DotGrid";
+import { useRef } from "react";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (i = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number], delay: i * 0.1 } }),
+};
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.92 },
+  visible: (i = 0) => ({ opacity: 1, scale: 1, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as [number, number, number, number], delay: i * 0.08 } }),
+};
+
+function ScrollReveal({ children, className = "", variants = fadeUp, custom = 0 }: {
+  children: React.ReactNode; className?: string; variants?: Variants; custom?: number;
+}) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-80px 0px" });
+  return (
+    <motion.div ref={ref} className={className} variants={variants} initial="hidden" animate={inView ? "visible" : "hidden"} custom={custom}>
+      {children}
+    </motion.div>
+  );
+}
+
+const coverages = [
+  { title: "Fallecimiento", desc: "Pago único del capital asegurado a los beneficiarios designados por el asegurado.", icon: ShieldCheck },
+  { title: "Invalidez total y permanente", desc: "Anticipo del 100% del capital si el asegurado queda incapacitado para trabajar.", icon: BadgeCheck },
+  { title: "Enfermedades graves", desc: "Pago anticipado ante diagnóstico de cáncer, infarto, ACV u otras enfermedades críticas.", icon: Heart },
+  { title: "Renta por incapacidad", desc: "Ingresos mensuales garantizados si no puedes trabajar por accidente o enfermedad.", icon: DollarSign },
+  { title: "Ahorro programado", desc: "Planes con componente de ahorro que devuelven capital al término del seguro.", icon: TrendingUp },
+  { title: "Gastos funerarios", desc: "Cubre los costos del sepelio para no dejar esa carga a tus seres queridos.", icon: FileText },
+];
+
+const stats = [
+  { value: "+20.000", label: "Familias protegidas" },
+  { value: "$50M", label: "Capital mínimo" },
+  { value: "<30d", label: "Pago de siniestro" },
+  { value: "100%", label: "Beneficiarios elegidos" },
+];
+
+const lifeScenarios = [
+  {
+    icon: Users,
+    title: "Tienes familia",
+    desc: "Si tienes cónyuge e hijos, el seguro de vida garantiza que puedan mantener su calidad de vida y seguir pagando la hipoteca si tú faltas.",
+  },
+  {
+    icon: DollarSign,
+    title: "Tienes deudas o créditos",
+    desc: "Un seguro de vida cubre las deudas pendientes (hipoteca, créditos de consumo) para que tu familia no herede obligaciones financieras.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Eres empresario o socio",
+    desc: "Protege la continuidad de tu empresa con un seguro de vida para socios que garantice la compra de participaciones en caso de fallecimiento.",
+  },
+];
+
+const faqs = [
+  { q: "¿Necesito examen médico para contratar?", a: "Para sumas aseguradas bajas (hasta $200M), no se requiere examen. Para coberturas mayores, se solicita una declaración de salud simple o exámenes básicos." },
+  { q: "¿Cuándo se paga el seguro a mis beneficiarios?", a: "Con la documentación completa, el pago se realiza en menos de 30 días hábiles tras el reporte del siniestro." },
+  { q: "¿Puedo cambiar los beneficiarios?", a: "Sí, puedes modificar los beneficiarios en cualquier momento con un simple trámite sin costo adicional." },
+  { q: "¿Qué pasa si dejo de pagar la prima?", a: "Según el tiempo de vigencia del contrato, la póliza puede tener valores reducidos o convertirse en un seguro pagado. Tu asesor te explicará las opciones específicas de tu plan." },
+  { q: "¿Se cubre el suicidio?", a: "La mayoría de pólizas excluye el suicidio durante los primeros dos años de vigencia. Después de ese período, queda cubierto según las condiciones del contrato." },
+  { q: "¿El seguro de vida tiene devolución de dinero?", a: "Los planes con ahorro programado sí devuelven capital al vencimiento. Los planes de vida pura no tienen valor de rescate pero tienen primas significativamente más bajas." },
+];
+
+export default function SeguroVida() {
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
+
+  return (
+    <div className="min-h-screen bg-[#F8FAFC] overflow-x-hidden">
+      <Navbar />
+
+      {/* HERO */}
+      <section ref={heroRef} className="relative min-h-[88vh] flex items-center overflow-hidden">
+        <motion.div className="absolute inset-0 z-0" style={{ y: heroY }}>
+          <img className="w-full h-full object-cover scale-110" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_6c715de13c_abdf3474689a28cd.png" alt="Seguro de Vida hero" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#001f4d]/88 via-[#0057B8]/55 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#001133]/80 via-transparent to-transparent" />
+          <motion.div className="absolute top-24 right-32 w-80 h-80 bg-[#0057B8]/20 rounded-full blur-3xl pointer-events-none" animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.65, 0.4] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} />
+        </motion.div>
+
+        <DotGrid className="z-[1]" opacity={0.45} />
+
+
+        <motion.div className="container-wide relative z-20 py-24 md:py-32" style={{ opacity: heroOpacity }}>
+          <div className="max-w-3xl">
+            <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0} className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/30 text-white text-sm font-inter font-medium px-4 py-2 rounded-full mb-8">
+              <Heart className="w-4 h-4 text-[#4DA3FF]" />
+              Capital asegurado desde $50 millones
+            </motion.div>
+            <motion.p variants={fadeUp} initial="hidden" animate="visible" custom={0.5} className="text-[#4DA3FF] font-inter font-semibold text-sm uppercase tracking-widest mb-3">
+              Seguro de Vida
+            </motion.p>
+            <motion.h1 variants={fadeUp} initial="hidden" animate="visible" custom={1} className="font-manrope font-extrabold text-5xl md:text-7xl text-white leading-[1.08] mb-6 drop-shadow-lg">
+              Protege el futuro<br />
+              <span style={{ background: "linear-gradient(135deg, #4DA3FF 0%, #7BC4FF 50%, #4DA3FF 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                de quienes amas
+              </span>
+            </motion.h1>
+            <motion.p variants={fadeUp} initial="hidden" animate="visible" custom={2} className="text-white/80 text-xl font-inter leading-relaxed max-w-xl mb-10">
+              El seguro de vida más importante es el que tienes contratado hoy. Asegura la estabilidad económica de tu familia con planes accesibles desde $50.000 al mes.
+            </motion.p>
+            <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={3} className="flex flex-wrap items-center gap-4 mb-12">
+              <a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}>
+                  <Button className="bg-[#0057B8] hover:bg-[#004a9e] text-white rounded-xl px-8 py-4 text-base font-inter font-semibold h-auto shadow-2xl shadow-blue-900/50 transition-colors duration-200">
+                    <Phone className="mr-2 w-5 h-5" /> Cotizar seguro de vida
+                  </Button>
+                </motion.div>
+              </a>
+              <a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                <motion.div whileHover={{ scale: 1.04, y: -1 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}>
+                  <Button variant="outline" className="bg-transparent backdrop-blur-sm border-white/40 text-white hover:bg-white/20 rounded-xl px-8 py-4 text-base font-inter h-auto transition-colors duration-200">
+                    <Phone className="mr-2 w-4 h-4" /> Hablar con asesor
+                  </Button>
+                </motion.div>
+              </a>
+            </motion.div>
+            <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={4} className="flex flex-wrap items-center gap-6 text-sm font-inter">
+              {[{ icon: ShieldCheck, text: "Asesoría sin costo" }, { icon: CheckCircle2, text: "Prima desde $50K/mes" }, { icon: Clock, text: "Pago en menos de 30 días" }].map(({ icon: TIcon, text }) => (
+                <span key={text} className="flex items-center gap-2 text-white/75">
+                  <span className="w-7 h-7 bg-white/15 rounded-full flex items-center justify-center"><TIcon className="w-3.5 h-3.5 text-[#4DA3FF]" /></span>
+                  {text}
+                </span>
+              ))}
+            </motion.div>
+          </div>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.9 }} className="absolute bottom-0 left-0 right-0 z-20 bg-white/10 backdrop-blur-md border-t border-white/20">
+          <div className="container-wide py-5">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {stats.map(({ value, label }, i) => (
+                <motion.div key={label} className="flex items-center gap-3" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 1.1 + i * 0.1 }}>
+                  <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center shrink-0"><Heart className="w-5 h-5 text-[#4DA3FF]" /></div>
+                  <div>
+                    <StatCounter value={value} className="block font-manrope font-extrabold text-white text-xl leading-none" />
+                    <div className="text-white/60 text-xs font-inter mt-0.5">{label}</div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ¿QUIÉN NECESITA UN SEGURO DE VIDA? */}
+      <section className="section-padding bg-white">
+        <div className="container-wide">
+          <ScrollReveal className="text-center mb-12">
+            <span className="inline-block bg-blue-50 text-[#0057B8] text-sm font-inter font-semibold px-4 py-1.5 rounded-full mb-4">¿Quién lo necesita?</span>
+            <h2 className="font-manrope font-extrabold text-4xl text-[#1F2937] mb-3">El seguro de vida no es para ti: es para los que amas</h2>
+            <p className="text-gray-500 font-inter text-lg max-w-2xl mx-auto">Si hay personas que dependen económicamente de ti, un seguro de vida es la decisión más responsable que puedes tomar hoy.</p>
+          </ScrollReveal>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
+            {lifeScenarios.map(({ icon: Icon, title, desc }, i) => (
+              <ScrollReveal key={title} custom={i} variants={scaleIn}>
+                <motion.div className="bg-[#F8FAFC] border border-[#E6E9ED] rounded-2xl p-7" whileHover={{ y: -5, boxShadow: "0 16px 40px -8px rgba(0,87,184,0.12)", borderColor: "rgba(0,87,184,0.25)" }} transition={{ type: "spring", stiffness: 300, damping: 22 }}>
+                  <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-5">
+                    <Icon className="w-7 h-7 text-[#0057B8]" />
+                  </div>
+                  <h4 className="font-manrope font-bold text-[#1F2937] text-lg mb-3">{title}</h4>
+                  <p className="text-gray-500 font-inter text-sm leading-relaxed">{desc}</p>
+                </motion.div>
+              </ScrollReveal>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {coverages.map(({ title, desc, icon: CIcon }, i) => (
+              <ScrollReveal key={title} custom={i} variants={scaleIn}>
+                <motion.div className="group bg-[#F8FAFC] border border-[#E6E9ED] rounded-2xl p-6 relative overflow-hidden" whileHover={{ y: -5, boxShadow: "0 20px 40px -10px rgba(0,87,184,0.15)", borderColor: "rgba(0,87,184,0.3)" }} transition={{ type: "spring", stiffness: 300, damping: 22 }}>
+                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#003f8a] to-[#0077e6] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4"><CIcon className="w-6 h-6 text-[#0057B8]" /></div>
+                  <span className="font-manrope font-bold text-[#1F2937] text-base block mb-2">{title}</span>
+                  <p className="text-gray-500 text-sm font-inter leading-relaxed">{desc}</p>
+                </motion.div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* COTIZACIÓN PERSONALIZADA */}
+      <section className="section-padding bg-[#F8FAFC]">
+        <div className="container-wide">
+          <ScrollReveal>
+            <div className="bg-gradient-to-br from-[#001f4d] to-[#0057B8] rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
+              <motion.div className="absolute top-0 right-0 w-72 h-72 bg-[#4DA3FF]/10 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl pointer-events-none" animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} />
+              <motion.div className="absolute bottom-0 left-0 w-72 h-72 bg-[#4DA3FF]/10 rounded-full translate-y-1/2 -translate-x-1/4 blur-3xl pointer-events-none" animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }} />
+              <div className="relative z-10">
+                <span className="inline-block bg-white/15 border border-white/25 text-white text-sm font-inter font-medium px-4 py-1.5 rounded-full mb-6">Sin planes fijos — Tu seguro, a tu medida</span>
+                <h2 className="font-manrope font-extrabold text-3xl md:text-4xl text-white mb-4 leading-tight">El capital ideal para tu familia<br />lo calculamos <span className="text-[#7BC4FF]">juntos contigo</span></h2>
+                <p className="text-blue-100 font-inter text-base md:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">No existen planes fijos ni tarifas estándar. La edad, el estado de salud, el capital deseado y los beneficiarios que elijas definen tu cotización real. Un asesor te guía en cada paso, gratis y sin compromiso.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto mb-8">
+                  {[
+                    { icon: Heart, text: "Calculamos el capital ideal" },
+                    { icon: ShieldCheck, text: "Comparativa de aseguradoras" },
+                    { icon: CheckCircle2, text: "Asesoría sin costo" },
+                  ].map(({ icon: Icon, text }) => (
+                    <div key={text} className="flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3">
+                      <div className="w-8 h-8 bg-white/15 rounded-lg flex items-center justify-center shrink-0"><Icon className="w-4 h-4 text-[#7BC4FF]" /></div>
+                      <span className="text-white/90 font-inter text-sm font-medium">{text}</span>
+                    </div>
+                  ))}
+                </div>
+                <a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                  <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} className="inline-block">
+                    <Button className="bg-white text-[#0057B8] hover:bg-blue-50 rounded-xl px-8 h-12 text-base font-inter font-semibold shadow-2xl shadow-blue-900/30 transition-colors duration-200">
+                      <Phone className="mr-2 w-4 h-4" /> Hablar con un asesor ahora
+                    </Button>
+                  </motion.div>
+                </a>
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ADVISOR */}
+      <section className="section-padding bg-white">
+        <div className="container-wide">
+          <ScrollReveal>
+            <div className="bg-[#F8FAFC] border border-[#E6E9ED] rounded-2xl p-8 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+              <div>
+                <span className="inline-block bg-blue-50 text-[#0057B8] text-sm font-inter font-semibold px-4 py-1.5 rounded-full mb-5">Asesoría en seguros de vida</span>
+                <h3 className="font-manrope font-extrabold text-3xl text-[#1F2937] mb-4 leading-snug">La decisión más importante<br />merece el mejor asesor</h3>
+                <p className="text-gray-500 font-inter text-base leading-relaxed mb-7">Un seguro de vida no es solo un producto financiero, es una promesa. Nuestros asesores te ayudan a calcular el capital correcto, elegir los beneficiarios y entender cada cláusula del contrato.</p>
+                <div className="space-y-3 mb-8">
+                  {["Calculamos el capital ideal para proteger a tu familia", "Sin letra pequeña: te explicamos cada exclusión", "Gestión ágil del siniestro cuando más lo necesitas", "Seguimiento anual para actualizar tu cobertura"].map((item, i) => (
+                    <ScrollReveal key={item} custom={i}>
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-[#10B981] shrink-0" />
+                        <span className="text-gray-600 font-inter text-sm">{item}</span>
+                      </div>
+                    </ScrollReveal>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                    <Button className="bg-[#0057B8] hover:bg-[#004a9e] text-white rounded-xl px-6 h-11 font-inter shadow-lg shadow-blue-900/20 transition-colors duration-200"><Phone className="mr-2 w-4 h-4" /> Cotizar con asesor</Button>
+                  </a>
+                  <QuoterGate><Link href="/cotizar">
+                    <Button variant="outline" className="border-gray-200 text-gray-700 hover:border-[#0057B8] hover:text-[#0057B8] rounded-xl h-11 font-inter transition-colors duration-200"><ArrowRight className="mr-2 w-4 h-4" /> Cotizar en línea</Button>
+                  </Link></QuoterGate>
+                </div>
+              </div>
+              <div className="relative h-64 md:h-80 rounded-2xl overflow-hidden shadow-xl">
+                <img className="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_6c715de13c_abdf3474689a28cd.png" alt="Familia protegida con seguro de vida" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#001133]/50 via-transparent to-transparent" />
+                <motion.div className="absolute bottom-4 left-4 right-4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.6 }}>
+                  <div className="bg-white/90 backdrop-blur-sm rounded-xl px-4 py-3 flex items-center gap-3 shadow-lg">
+                    <div className="w-9 h-9 bg-[#0057B8] rounded-lg flex items-center justify-center shrink-0"><Heart className="w-5 h-5 text-white" /></div>
+                    <div>
+                      <div className="font-manrope font-bold text-[#1F2937] text-sm">Seguro de Vida</div>
+                      <div className="text-gray-500 text-xs font-inter">Desde $50.000 al mes</div>
+                    </div>
+                    <div className="ml-auto flex items-center gap-1">
+                      <Star className="w-3.5 h-3.5 fill-[#F59E0B] text-[#F59E0B]" />
+                      <span className="text-xs font-inter font-semibold text-gray-600">4.9</span>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* FAQs */}
+      <section className="section-padding bg-[#F8FAFC]">
+        <div className="container-wide">
+          <ScrollReveal className="text-center mb-12">
+            <span className="inline-block bg-blue-50 text-[#0057B8] text-sm font-inter font-semibold px-4 py-1.5 rounded-full mb-4">Resolvemos tus dudas</span>
+            <h2 className="font-manrope font-extrabold text-4xl text-[#1F2937] mb-3">Preguntas frecuentes sobre seguro de vida</h2>
+            <p className="text-gray-500 font-inter text-lg max-w-xl mx-auto">Resolvemos las dudas más comunes antes de contratar.</p>
+          </ScrollReveal>
+          <div className="max-w-3xl mx-auto space-y-3">
+            {faqs.map(({ q, a }, i) => (
+              <ScrollReveal key={q} custom={i}>
+                <motion.details className="bg-white border border-[#E6E9ED] rounded-2xl group overflow-hidden" whileHover={{ borderColor: "rgba(0,87,184,0.25)" }} transition={{ duration: 0.2 }}>
+                  <summary className="flex items-center justify-between p-5 cursor-pointer font-manrope font-semibold text-[#1F2937] text-base list-none gap-4">
+                    <span className="flex items-center gap-3">
+                      <span className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center shrink-0"><ChevronRight className="w-4 h-4 text-[#0057B8] group-open:rotate-90 transition-transform duration-200" /></span>
+                      {q}
+                    </span>
+                  </summary>
+                  <div className="px-5 pb-5 pl-[60px] text-gray-500 text-sm font-inter leading-relaxed">{a}</div>
+                </motion.details>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FINAL CTA */}
+      <section className="relative py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #001f4d 0%, #0057B8 45%, #0077e6 100%)" }}>
+          <motion.div className="absolute top-0 right-0 w-96 h-96 bg-[#4DA3FF]/15 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none" animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }} />
+        </div>
+        <DotGrid className="z-[1]" opacity={0.35} />
+
+        <div className="container-wide relative z-10 text-center">
+          <ScrollReveal>
+            <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/25 text-white text-sm font-inter font-medium px-4 py-2 rounded-full mb-8">
+              <Heart className="w-4 h-4 text-[#4DA3FF]" /> El mejor momento para contratar fue ayer. El segundo mejor es hoy.
+            </div>
+          </ScrollReveal>
+          <ScrollReveal custom={1}>
+            <h2 className="font-manrope font-extrabold text-4xl md:text-5xl text-white mb-5 leading-tight">Asegura el futuro de tu familia<br />desde hoy mismo</h2>
+          </ScrollReveal>
+          <ScrollReveal custom={2}>
+            <p className="text-blue-200 font-inter text-lg mb-10 max-w-xl mx-auto leading-relaxed">Un asesor especializado en seguros de vida te ayuda a calcular el capital correcto y elegir el plan ideal. Sin costo, sin compromiso.</p>
+          </ScrollReveal>
+          <ScrollReveal custom={3}>
+            <div className="flex flex-wrap justify-center gap-4">
+              <a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                <motion.div whileHover={{ scale: 1.06, y: -3 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} className="inline-block">
+                  <Button className="bg-white text-[#0057B8] hover:bg-blue-50 rounded-xl px-8 h-12 text-base font-inter font-semibold shadow-2xl shadow-blue-900/30 transition-colors duration-200"><Phone className="mr-2 w-4 h-4" /> Cotizar con un asesor</Button>
+                </motion.div>
+              </a>
+              <QuoterGate><Link href="/cotizar">
+                <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} className="inline-block">
+                  <Button variant="outline" className="bg-transparent border-white/50 text-white hover:bg-white/15 rounded-xl px-8 h-12 text-base font-inter transition-colors duration-200"><ArrowRight className="mr-2 w-4 h-4" /> Cotizar en línea</Button>
+                </motion.div>
+              </Link></QuoterGate>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

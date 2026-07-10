@@ -1,0 +1,186 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { waUrl } from "@/lib/whatsapp";
+import { ChevronRight, Search, ArrowRight, MessageSquare } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { Reveal, WordHighlight, GlowOrbs } from "@/components/motion";
+import { Eyebrow } from "@/components/site/Eyebrow";
+import { DotGrid } from "@/components/site/DotGrid";
+import { getFaqCategories } from "@/content";
+
+const faqCategories = [
+  {
+    label: "General",
+    faqs: [
+      { q: "¿Qué es Llano Seguros?", a: "Llano Seguros es una correduría de seguros independiente que te permite comparar y cotizar seguros de las principales aseguradoras del país en un solo lugar." },
+      { q: "¿Es gratuito el servicio de cotización?", a: "Sí, completamente. Cotizar, comparar y asesorarte con nuestros expertos no tiene ningún costo." },
+      { q: "¿Cuánto tiempo toma obtener una cotización?", a: "En menos de 1 minuto puedes obtener cotizaciones comparadas de múltiples aseguradoras." },
+      { q: "¿Llano Seguros es una aseguradora?", a: "No, somos una correduría o bróker de seguros. Actuamos como tus asesores para encontrar la mejor póliza entre múltiples aseguradoras." },
+    ],
+  },
+  {
+    label: "Pólizas",
+    faqs: [
+      { q: "¿Cómo recibo mi póliza?", a: "Una vez que contratas, recibes todos los documentos digitalmente a tu correo de forma inmediata." },
+      { q: "¿Puedo modificar mi póliza?", a: "Sí, puedes solicitar modificaciones a través de tu portal de cliente o contactando a nuestros asesores." },
+      { q: "¿Qué pasa si quiero cancelar mi seguro?", a: "Puedes cancelar tu póliza siguiendo el proceso establecido por cada aseguradora. Te acompañamos en el proceso." },
+      { q: "¿Cómo funciona la renovación?", a: "Recibirás una notificación con 30 días de anticipación antes de tu renovación con opciones de renovar o cambiar de plan." },
+    ],
+  },
+  {
+    label: "Pagos",
+    faqs: [
+      { q: "¿Cuáles son los métodos de pago?", a: "Aceptamos tarjeta de crédito, débito automático, PSE y pagos en efectivo en puntos autorizados." },
+      { q: "¿Puedo pagar en cuotas?", a: "Sí, muchos planes ofrecen opciones de pago mensual, trimestral, semestral o anual." },
+      { q: "¿Qué pasa si no pago a tiempo?", a: "Tendrás un periodo de gracia. Después de ese período, la póliza puede suspenderse. Te notificamos con anticipación." },
+    ],
+  },
+  {
+    label: "Siniestros",
+    faqs: [
+      { q: "¿Cómo reporto un siniestro?", a: "Puedes reportarlo desde tu portal de cliente, por WhatsApp o llamando a nuestra línea 24/7." },
+      { q: "¿Cuánto tarda el proceso de un siniestro?", a: "Depende del tipo de siniestro y la aseguradora. Nosotros hacemos seguimiento y te acompañamos en todo el proceso." },
+      { q: "¿Qué documentos necesito para un siniestro?", a: "Depende del tipo de póliza. En general: identificación, número de póliza y documentación del evento." },
+    ],
+  },
+];
+
+export default function FAQ() {
+  const [search, setSearch] = useState("");
+  const [activeCategory, setActiveCategory] = useState("General");
+
+  const filteredFaqs = faqCategories.map((cat) => ({
+    ...cat,
+    faqs: cat.faqs.filter(
+      (f) =>
+        f.q.toLowerCase().includes(search.toLowerCase()) ||
+        f.a.toLowerCase().includes(search.toLowerCase())
+    ),
+  })).filter((cat) => cat.faqs.length > 0);
+
+  const displayCategories = search ? filteredFaqs : faqCategories;
+  const currentCategory = displayCategories.find((c) => c.label === activeCategory) || displayCategories[0];
+
+  return (
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <Navbar />
+
+      {/* Hero */}
+      <section className="relative py-20 md:py-28 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img className="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_ece9bfff44_0943146d510320dd.png" alt="customer support help desk, friendly advisor with headset at a modern desk surrounded by floating FA" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        </div>
+        <DotGrid className="z-[1]" opacity={0.4} />
+        <GlowOrbs className="z-[1]" />
+        <div className="container-wide text-center relative z-10">
+          <Reveal className="mb-4 flex justify-center"><Eyebrow label="Centro de ayuda" icon={MessageSquare} tone="dark" /></Reveal><h1 className="font-manrope font-extrabold text-5xl text-white mb-3 drop-shadow-md"><WordHighlight text="Preguntas **frecuentes**" highlightClassName="text-[#4DA3FF] underline decoration-[#4DA3FF]/40 underline-offset-[8px] decoration-4" /></h1>
+          <p className="text-white/80 font-inter text-lg mb-7 max-w-lg mx-auto">
+            Encuentra respuestas rápidas a las preguntas más comunes sobre nuestros seguros.
+          </p>
+          <div className="relative max-w-md mx-auto">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Input
+              className="pl-10 rounded-xl border-[#E6E9ED] h-12 font-inter text-base"
+              placeholder="Buscar pregunta..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Content */}
+      <section className="section-padding">
+        <div className="container-wide">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {/* Category sidebar */}
+            <div className="md:col-span-1">
+              <div className="bg-white border border-[#E6E9ED] rounded-2xl p-4 sticky top-24">
+                <p className="font-manrope font-semibold text-xs text-gray-400 uppercase tracking-wider mb-3 px-2">Categorías</p>
+                <nav className="space-y-1">
+                  {displayCategories.map(({ label }) => (
+                    <button
+                      key={label}
+                      onClick={() => setActiveCategory(label)}
+                      className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-inter font-medium transition-colors flex items-center justify-between ${
+                        activeCategory === label
+                          ? "bg-blue-50 text-[#0057B8]"
+                          : "text-gray-600 hover:bg-[#F8FAFC] hover:text-[#0057B8]"
+                      }`}
+                    >
+                      {label}
+                      <ChevronRight className="w-3.5 h-3.5 opacity-50" />
+                    </button>
+                  ))}
+                </nav>
+              </div>
+            </div>
+
+            {/* FAQs */}
+            <div className="md:col-span-3">
+              {currentCategory ? (
+                <div>
+                  <h2 className="font-manrope font-bold text-2xl text-[#1F2937] mb-6">
+                    {currentCategory.label}
+                  </h2>
+                  <div className="space-y-3">
+                    {currentCategory.faqs.map(({ q, a }) => (
+                      <details key={q} className="bg-white border border-[#E6E9ED] rounded-xl group">
+                        <summary className="flex items-center justify-between p-5 cursor-pointer font-manrope font-semibold text-[#1F2937] text-sm list-none">
+                          {q}
+                          <ChevronRight className="w-4 h-4 text-gray-400 group-open:rotate-90 transition-transform shrink-0 ml-4" />
+                        </summary>
+                        <div className="px-5 pb-5 text-gray-500 text-sm font-inter leading-relaxed">{a}</div>
+                      </details>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-gray-400 font-inter">No se encontraron preguntas.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact CTA */}
+      <section className="bg-[#1F2937] py-14">
+        <div className="container-wide">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 max-w-3xl mx-auto">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <MessageSquare className="w-6 h-6 text-[#0057B8]" />
+                <h2 className="font-manrope font-bold text-2xl text-white">¿No encontraste tu respuesta?</h2>
+              </div>
+              <p className="text-gray-400 font-inter">Nuestros asesores están disponibles para ayudarte.</p>
+            </div>
+            <div className="flex gap-3 shrink-0">
+              <Link href="/contacto">
+                <Button variant="outline" className="bg-transparent border-white/20 text-white hover:bg-white/10 rounded-xl font-inter">
+                  Contactar
+                </Button>
+              </Link>
+              <a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                <Button className="bg-[#0057B8] hover:bg-[#004a9e] text-white rounded-xl font-inter">
+                  WhatsApp <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

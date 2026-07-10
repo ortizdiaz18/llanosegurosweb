@@ -1,0 +1,875 @@
+"use client";
+
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { waUrl } from "@/lib/whatsapp";
+import {
+  Car, Bike, Activity, Heart, Home, Building2,
+  CheckCircle2, ArrowRight, Phone, ShieldCheck, ChevronRight,
+  Star, Clock, Users, BadgeCheck, LifeBuoy, Zap,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { motion, useInView, useScroll, useTransform, type Variants } from "framer-motion";
+import { StatCounter } from "@/components/motion";
+import { DotGrid } from "@/components/site/DotGrid";
+import { useRef } from "react";
+
+/* ─── Animation Variants ─────────────────────────── */
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number], delay: i * 0.1 },
+  }),
+};
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.92 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as [number, number, number, number], delay: i * 0.08 },
+  }),
+};
+
+/* ─── Scroll-triggered section wrapper ───────────── */
+function ScrollReveal({
+  children,
+  className = "",
+  variants = fadeUp,
+  custom = 0,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  variants?: Variants;
+  custom?: number;
+}) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-80px 0px" });
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      variants={variants}
+      initial="hidden"
+      animate={inView ? "visible" : "hidden"}
+      custom={custom}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* ─── Insurance Data ──────────────────────────────── */
+const insuranceData: Record<string, {
+  label: string;
+  tagline: string;
+  subtitle: string;
+  icon: React.ElementType;
+  heroDesc: string;
+  heroBadge: string;
+  benefits: { text: string; icon: React.ElementType }[];
+  coverages: { title: string; desc: string; icon: React.ElementType }[];
+  stats: { value: string; label: string }[];
+  faqs: { q: string; a: string }[];
+  img_url: string;
+  heroImg_url: string;
+}> = {
+  auto: {
+    label: "Auto",
+    tagline: "Maneja con total tranquilidad",
+    subtitle: "Seguro de Autos",
+    icon: Car,
+    heroDesc: "Protege tu vehículo con la mejor cobertura del mercado. Compara precios de las principales aseguradoras y elige la opción que más se adapta a ti.",
+    heroBadge: "Cotización gratuita en 1 minuto",
+    benefits: [
+      { text: "Cotización instantánea y gratuita", icon: Zap },
+      { text: "Cobertura todo riesgo o básica", icon: ShieldCheck },
+      { text: "Asistencia en carretera 24/7", icon: Clock },
+      { text: "Carro de reemplazo incluido", icon: Car },
+      { text: "Atención a siniestros en 24 horas", icon: LifeBuoy },
+    ],
+    coverages: [
+      { title: "Responsabilidad Civil", desc: "Cubre daños a terceros en caso de accidente.", icon: ShieldCheck },
+      { title: "Daños propios", desc: "Protege tu vehículo ante colisiones y volcamientos.", icon: BadgeCheck },
+      { title: "Robo e incendio", desc: "Cobertura ante pérdida total o parcial por robo.", icon: ShieldCheck },
+      { title: "Asistencia en vía", desc: "Grúa, cambio de llanta y combustible incluidos.", icon: LifeBuoy },
+    ],
+    stats: [
+      { value: "+15.000", label: "Vehículos asegurados" },
+      { value: "24/7", label: "Asistencia en vía" },
+      { value: "98%", label: "Satisfacción del cliente" },
+      { value: "<24h", label: "Atención de siniestros" },
+    ],
+    faqs: [
+      { q: "¿Necesito SOAT para contratar?", a: "Sí, el SOAT es obligatorio y es aparte del seguro voluntario de auto." },
+      { q: "¿Cómo reporto un siniestro?", a: "A través de nuestra plataforma digital o línea 24/7 en menos de 5 minutos." },
+      { q: "¿Puedo asegurar cualquier marca de vehículo?", a: "Sí, trabajamos con todas las marcas y modelos del mercado colombiano." },
+    ],
+    img_url: "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_52f15e1feb_f1ebb57deffe60ea.png",
+    heroImg_url: "modern luxury car parked on urban road at dusk, blue city lights, premium automotive insurance photography, cinematic wide shot",
+  },
+  moto: {
+    label: "Moto",
+    tagline: "Protección total para tu moto",
+    subtitle: "Seguro de Motos",
+    icon: Bike,
+    heroDesc: "Seguro integral para tu motocicleta. Cobertura amplia, precios competitivos y asesoría personalizada para cada tipo de moto.",
+    heroBadge: "Todas las marcas y cilindrajes",
+    benefits: [
+      { text: "Cotización en menos de 1 minuto", icon: Zap },
+      { text: "Cobertura para todo tipo de motos", icon: ShieldCheck },
+      { text: "Asistencia vial inmediata", icon: LifeBuoy },
+      { text: "Protección ante robo", icon: BadgeCheck },
+      { text: "Responsabilidad civil amplia", icon: ShieldCheck },
+    ],
+    coverages: [
+      { title: "Responsabilidad Civil", desc: "Cubre daños causados a terceros.", icon: ShieldCheck },
+      { title: "Robo total", desc: "Indemnización en caso de robo de la motocicleta.", icon: BadgeCheck },
+      { title: "Daños propios", desc: "Cubre reparaciones por accidentes.", icon: ShieldCheck },
+      { title: "Accidentes personales", desc: "Protección para el conductor.", icon: LifeBuoy },
+    ],
+    stats: [
+      { value: "+8.000", label: "Motos aseguradas" },
+      { value: "24/7", label: "Asistencia en vía" },
+      { value: "100%", label: "Marcas cubiertas" },
+      { value: "<1min", label: "Cotización online" },
+    ],
+    faqs: [
+      { q: "¿Se asegura cualquier tipo de moto?", a: "Sí, aseguramos motos de cualquier cilindraje y marca." },
+      { q: "¿Qué pasa en caso de accidente?", a: "Contamos con red de talleres aliados y atención inmediata." },
+      { q: "¿El SOAT está incluido?", a: "No, el SOAT es un seguro obligatorio separado del voluntario de moto." },
+    ],
+    img_url: "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_7af227fbfd_a2f88ed0b575ff19.png",
+    heroImg_url: "motorcycle rider on open highway at sunset, freedom and adventure concept, premium lifestyle photography, wide cinematic angle",
+  },
+  salud: {
+    label: "Salud",
+    tagline: "Tu salud, nuestra prioridad",
+    subtitle: "Seguro de Salud",
+    icon: Activity,
+    heroDesc: "Accede a la mejor red de clínicas y médicos del país. Planes individuales y familiares con coberturas completas para toda situación.",
+    heroBadge: "+1.000 clínicas aliadas en Colombia",
+    benefits: [
+      { text: "Red de más de 1.000 clínicas aliadas", icon: Users },
+      { text: "Atención inmediata sin esperas", icon: Zap },
+      { text: "Cubre urgencias y hospitalización", icon: LifeBuoy },
+      { text: "Medicamentos y exámenes incluidos", icon: BadgeCheck },
+      { text: "Planes personalizados por familia", icon: ShieldCheck },
+    ],
+    coverages: [
+      { title: "Hospitalización", desc: "Habitación privada y gastos médicos.", icon: LifeBuoy },
+      { title: "Urgencias", desc: "Atención de emergencias a nivel nacional.", icon: Zap },
+      { title: "Cirugías", desc: "Cobertura para procedimientos quirúrgicos.", icon: BadgeCheck },
+      { title: "Medicina preventiva", desc: "Exámenes de rutina y vacunación.", icon: ShieldCheck },
+    ],
+    stats: [
+      { value: "+1.000", label: "Clínicas aliadas" },
+      { value: "24/7", label: "Urgencias cubiertas" },
+      { value: "100%", label: "Cobertura nacional" },
+      { value: "<24h", label: "Tiempo de respuesta" },
+    ],
+    faqs: [
+      { q: "¿Tiene período de carencia?", a: "Depende del plan elegido, algunos tienen coberturas inmediatas." },
+      { q: "¿Puedo incluir a mi familia?", a: "Sí, ofrecemos planes familiares con descuentos especiales." },
+      { q: "¿Aplica para enfermedades preexistentes?", a: "Evaluamos cada caso particular y ofrecemos opciones de cobertura adaptadas." },
+    ],
+    img_url: "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_bd907b7535_66b0c95bf4e4dcd9.png",
+    heroImg_url: "modern private hospital building facade with blue sky, health insurance concept, professional medical photography, clean and bright",
+  },
+  vida: {
+    label: "Vida",
+    tagline: "Protege el futuro de tu familia",
+    subtitle: "Seguro de Vida",
+    icon: Heart,
+    heroDesc: "El seguro de vida más importante es el que tienes. Protege el bienestar económico de las personas que más amas con planes flexibles y accesibles.",
+    heroBadge: "Capital asegurado desde $50 millones",
+    benefits: [
+      { text: "Capital asegurado desde $50 millones", icon: BadgeCheck },
+      { text: "Cobertura por fallecimiento e invalidez", icon: ShieldCheck },
+      { text: "Beneficiarios múltiples", icon: Users },
+      { text: "Prima accesible desde $50.000/mes", icon: Zap },
+      { text: "Enfermedades graves cubiertas", icon: LifeBuoy },
+    ],
+    coverages: [
+      { title: "Fallecimiento", desc: "Pago único a los beneficiarios designados.", icon: ShieldCheck },
+      { title: "Invalidez total", desc: "Protección en caso de incapacidad permanente.", icon: BadgeCheck },
+      { title: "Enfermedades graves", desc: "Anticipo del capital asegurado ante diagnósticos críticos.", icon: LifeBuoy },
+      { title: "Ahorro programado", desc: "Planes de vida con componente de ahorro.", icon: Star },
+    ],
+    stats: [
+      { value: "+20.000", label: "Familias protegidas" },
+      { value: "$50M", label: "Capital mínimo" },
+      { value: "<30d", label: "Pago de siniestro" },
+      { value: "100%", label: "Beneficiarios elegidos" },
+    ],
+    faqs: [
+      { q: "¿Necesito examen médico?", a: "Para sumas bajas, no. Para altas coberturas hay una declaración de salud simple." },
+      { q: "¿Cuándo se paga el seguro?", a: "El pago se realiza en menos de 30 días tras el reporte del siniestro." },
+      { q: "¿Puedo cambiar los beneficiarios?", a: "Sí, puedes modificar los beneficiarios en cualquier momento con un simple trámite." },
+    ],
+    img_url: "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_6c715de13c_abdf3474689a28cd.png",
+    heroImg_url: "loving family couple with children walking in nature park, warm golden light, life protection and future security concept, cinematic wide shot",
+  },
+  hogar: {
+    label: "Hogar",
+    tagline: "Tu hogar siempre protegido",
+    subtitle: "Seguro de Hogar",
+    icon: Home,
+    heroDesc: "Protege tu vivienda y todo lo que hay en ella. Cobertura ante incendio, robo, daños estructurales y responsabilidad civil.",
+    heroBadge: "Casas y apartamentos cubiertos",
+    benefits: [
+      { text: "Protección del inmueble y contenidos", icon: ShieldCheck },
+      { text: "Cobertura ante incendio y explosión", icon: BadgeCheck },
+      { text: "Responsabilidad civil de propietario", icon: Users },
+      { text: "Daños por agua e inundación", icon: LifeBuoy },
+      { text: "Asistencia al hogar 24/7", icon: Clock },
+    ],
+    coverages: [
+      { title: "Incendio y aliados", desc: "Cubre daños por fuego, explosión y cortocircuito.", icon: ShieldCheck },
+      { title: "Robo de contenidos", desc: "Protege tus bienes personales ante hurto.", icon: BadgeCheck },
+      { title: "Responsabilidad civil", desc: "Cubre daños causados a vecinos.", icon: Users },
+      { title: "Daños por agua", desc: "Filtraciones, tuberías rotas y similares.", icon: LifeBuoy },
+    ],
+    stats: [
+      { value: "+10.000", label: "Hogares protegidos" },
+      { value: "24/7", label: "Asistencia al hogar" },
+      { value: "100%", label: "Casas y apartamentos" },
+      { value: "<48h", label: "Atención de daños" },
+    ],
+    faqs: [
+      { q: "¿Aplica para apartamentos?", a: "Sí, tenemos planes específicos para casas y apartamentos en arriendo o propios." },
+      { q: "¿Qué documentos necesito?", a: "Solo el avalúo comercial de la propiedad y datos básicos del inmueble." },
+      { q: "¿Cubre los electrodomésticos?", a: "Sí, los contenidos del hogar incluyen electrodomésticos y bienes personales." },
+    ],
+    img_url: "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_1826110e26_c1052993d8679e10.png",
+    heroImg_url: "beautiful modern luxury home exterior at golden hour, green lawn, suburban neighborhood, home insurance protection concept, wide cinematic shot",
+  },
+  empresarial: {
+    label: "Empresarial",
+    tagline: "Protege tu empresa, cuida tu equipo",
+    subtitle: "Seguro Empresarial",
+    icon: Building2,
+    heroDesc: "Soluciones de seguros diseñadas para empresas de todos los tamaños. Protege tus activos, empleados y responsabilidades con un solo aliado.",
+    heroBadge: "Para pymes, medianas y grandes empresas",
+    benefits: [
+      { text: "Planes adaptados a tu sector", icon: BadgeCheck },
+      { text: "Seguro de vida colectivo para empleados", icon: Users },
+      { text: "Cobertura de activos y maquinaria", icon: ShieldCheck },
+      { text: "Responsabilidad civil empresarial", icon: LifeBuoy },
+      { text: "Asesor dedicado para tu empresa", icon: Star },
+    ],
+    coverages: [
+      { title: "Todo riesgo empresarial", desc: "Protección integral de activos de la empresa.", icon: ShieldCheck },
+      { title: "Responsabilidad civil", desc: "Cubre daños causados a terceros en el ejercicio de la actividad.", icon: BadgeCheck },
+      { title: "Vida colectivo", desc: "Beneficio de vida para todos tus empleados.", icon: Users },
+      { title: "Transporte de mercancía", desc: "Protección en el traslado de bienes.", icon: LifeBuoy },
+    ],
+    stats: [
+      { value: "+2.000", label: "Empresas aseguradas" },
+      { value: "100%", label: "Sectores cubiertos" },
+      { value: "24/7", label: "Soporte dedicado" },
+      { value: "1", label: "Asesor dedicado" },
+    ],
+    faqs: [
+      { q: "¿Tienen planes para pymes?", a: "Sí, tenemos soluciones específicas para microempresas, pymes y grandes empresas." },
+      { q: "¿Puedo incluir a mis empleados?", a: "Absolutamente. Ofrecemos seguros de vida y salud colectivos con grandes beneficios." },
+      { q: "¿Cómo se adapta el seguro a mi sector?", a: "Nuestros asesores especializados analizan tu actividad y diseñan una cobertura a medida." },
+    ],
+    img_url: "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_d51dbea5c1_b63ba764b82e622c.png",
+    heroImg_url: "modern glass corporate office building at dusk with city skyline, business insurance concept, premium corporate photography, wide cinematic",
+  },
+  cumplimiento: {
+    label: "Cumplimiento",
+    tagline: "Garantiza tus contratos con respaldo",
+    subtitle: "Seguro de Cumplimiento",
+    icon: BadgeCheck,
+    heroDesc: "Asegura el cumplimiento de tus contratos y obligaciones. Respaldo sólido para licitaciones, contratos públicos y privados con las mejores aseguradoras.",
+    heroBadge: "Para contratos públicos y privados",
+    benefits: [
+      { text: "Cumplimiento de contratos públicos y privados", icon: BadgeCheck },
+      { text: "Pólizas de seriedad de oferta", icon: ShieldCheck },
+      { text: "Amparo de buena calidad", icon: Star },
+      { text: "Estabilidad de obra garantizada", icon: LifeBuoy },
+      { text: "Asesor especializado en contratación", icon: Users },
+    ],
+    coverages: [
+      { title: "Seriedad de oferta", desc: "Garantiza la seriedad en procesos de licitación.", icon: BadgeCheck },
+      { title: "Cumplimiento de contrato", desc: "Respalda la ejecución de obligaciones contractuales.", icon: ShieldCheck },
+      { title: "Buena calidad", desc: "Amparo por defectos en bienes o servicios entregados.", icon: Star },
+      { title: "Estabilidad de obra", desc: "Garantiza la solidez de la obra por el período establecido.", icon: LifeBuoy },
+    ],
+    stats: [
+      { value: "+500", label: "Contratos respaldados" },
+      { value: "100%", label: "Sectores cubiertos" },
+      { value: "24h", label: "Emisión de póliza" },
+      { value: "1", label: "Asesor especializado" },
+    ],
+    faqs: [
+      { q: "¿Para qué tipo de contratos aplica?", a: "Aplica para contratos públicos, privados, licitaciones y cualquier obligación contractual que requiera respaldo." },
+      { q: "¿Cuánto demora la emisión de la póliza?", a: "Con la documentación completa, podemos emitir la póliza en menos de 24 horas hábiles." },
+      { q: "¿Qué valor se asegura?", a: "El valor asegurado depende del porcentaje del contrato que exige la entidad contratante." },
+    ],
+    img_url: "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_a5786a4dff_729923165aff3570.png",
+    heroImg_url: "professional lawyers and business executives reviewing contract documents in modern office, compliance and legal guarantee concept, cinematic wide",
+  },
+};
+
+/* ─── Page ────────────────────────────────────────── */
+export default function InsurancePage() {
+  const { type } = useParams<{ type: string }>();
+  const data = insuranceData[type || "auto"] || insuranceData["auto"];
+  const { label, tagline, subtitle, icon: Icon, heroDesc, heroBadge, benefits, coverages, stats, faqs, img_url, heroImg_url } = data;
+
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
+
+  return (
+    <div className="min-h-screen bg-[#F8FAFC] overflow-x-hidden">
+      <Navbar />
+
+      {/* ── HERO ──────────────────────────────────────── */}
+      <section ref={heroRef} className="relative min-h-[88vh] flex items-center overflow-hidden">
+        {/* Parallax background */}
+        <motion.div className="absolute inset-0 z-0" style={{ y: heroY }}>
+          <img
+            className="w-full h-full object-cover scale-110"
+            src={heroImg_url}
+            alt={`${label} insurance hero`}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#001f4d]/85 via-[#0057B8]/50 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#001133]/75 via-transparent to-transparent" />
+          {/* Animated glow orbs */}
+          <motion.div
+            className="absolute top-24 right-32 w-80 h-80 bg-[#0057B8]/20 rounded-full blur-3xl pointer-events-none"
+            animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.65, 0.4] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute bottom-20 left-16 w-96 h-96 bg-[#003f8a]/25 rounded-full blur-3xl pointer-events-none"
+            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.55, 0.3] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          />
+        </motion.div>
+
+        <DotGrid className="z-[1]" opacity={0.45} />
+
+
+        <motion.div
+          className="container-wide relative z-20 py-24 md:py-32"
+          style={{ opacity: heroOpacity }}
+        >
+          <div className="max-w-3xl">
+            {/* Badge */}
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={0}
+              className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/30 text-white text-sm font-inter font-medium px-4 py-2 rounded-full mb-8"
+            >
+              <Icon className="w-4 h-4 text-[#4DA3FF]" />
+              {heroBadge}
+            </motion.div>
+
+            {/* Eyebrow */}
+            <motion.p
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={0.5}
+              className="text-[#4DA3FF] font-inter font-semibold text-sm uppercase tracking-widest mb-3"
+            >
+              {subtitle}
+            </motion.p>
+
+            {/* Heading */}
+            <motion.h1
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={1}
+              className="font-manrope font-extrabold text-5xl md:text-7xl text-white leading-[1.08] mb-6 drop-shadow-lg"
+            >
+              {tagline.split(",")[0]}<br />
+              <span
+                style={{
+                  background: "linear-gradient(135deg, #4DA3FF 0%, #7BC4FF 50%, #4DA3FF 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                {tagline.includes(",") ? tagline.split(",").slice(1).join(",") : "con Seguramos"}
+              </span>
+            </motion.h1>
+
+            {/* Subheading */}
+            <motion.p
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={2}
+              className="text-white/80 text-xl font-inter leading-relaxed max-w-xl mb-10"
+            >
+              {heroDesc}
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={3}
+              className="flex flex-wrap items-center gap-4 mb-12"
+            >
+              <a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                >
+                  <Button className="bg-[#0057B8] hover:bg-[#004a9e] text-white rounded-xl px-8 py-4 text-base font-inter font-semibold h-auto shadow-2xl shadow-blue-900/50 transition-colors duration-200">
+                    <Phone className="mr-2 w-5 h-5" /> Cotizar con un asesor
+                  </Button>
+                </motion.div>
+              </a>
+              <a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                <motion.div
+                  whileHover={{ scale: 1.04, y: -1 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                >
+                  <Button variant="outline" className="bg-transparent backdrop-blur-sm border-white/40 text-white hover:bg-white/20 rounded-xl px-8 py-4 text-base font-inter h-auto transition-colors duration-200">
+                    <Phone className="mr-2 w-4 h-4" /> Hablar con asesor
+                  </Button>
+                </motion.div>
+              </a>
+            </motion.div>
+
+            {/* Trust badges */}
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={4}
+              className="flex flex-wrap items-center gap-6 text-sm font-inter"
+            >
+              {[
+                { icon: ShieldCheck, text: "Asesoría personalizada" },
+                { icon: CheckCircle2, text: "Sin costo adicional" },
+                { icon: Clock, text: "Respuesta inmediata" },
+              ].map(({ icon: TrustIcon, text }) => (
+                <span key={text} className="flex items-center gap-2 text-white/75">
+                  <span className="w-7 h-7 bg-white/15 rounded-full flex items-center justify-center">
+                    <TrustIcon className="w-3.5 h-3.5 text-[#4DA3FF]" />
+                  </span>
+                  {text}
+                </span>
+              ))}
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Stats bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.9, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
+          className="absolute bottom-0 left-0 right-0 z-20 bg-white/10 backdrop-blur-md border-t border-white/20"
+        >
+          <div className="container-wide py-5">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {stats.map(({ value, label: statLabel }, i) => (
+                <motion.div
+                  key={statLabel}
+                  className="flex items-center gap-3"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 1.1 + i * 0.1 }}
+                >
+                  <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center shrink-0">
+                    <Icon className="w-5 h-5 text-[#4DA3FF]" />
+                  </div>
+                  <div>
+                    <StatCounter value={value} className="block font-manrope font-extrabold text-white text-xl leading-none" />
+                    <div className="text-white/60 text-xs font-inter mt-0.5">{statLabel}</div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ── BENEFITS & COVERAGES ──────────────────────── */}
+      <section className="section-padding bg-white">
+        <div className="container-wide">
+          <ScrollReveal className="text-center mb-14">
+            <span className="inline-block bg-blue-50 text-[#0057B8] text-sm font-inter font-semibold px-4 py-1.5 rounded-full mb-4">
+              Cobertura completa
+            </span>
+            <h2 className="font-manrope font-extrabold text-4xl text-[#1F2937] mb-3">
+              Todo lo que necesitas en un solo seguro
+            </h2>
+            <p className="text-gray-500 font-inter text-lg max-w-xl mx-auto">
+              Diseñado para darte tranquilidad real, con coberturas que hacen la diferencia cuando más importa.
+            </p>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            {/* Benefits */}
+            <ScrollReveal>
+              <h3 className="font-manrope font-extrabold text-2xl text-[#1F2937] mb-7">
+                Beneficios del seguro de {label}
+              </h3>
+              <ul className="space-y-4">
+                {benefits.map(({ text, icon: BIcon }, i) => (
+                  <ScrollReveal key={text} custom={i} variants={scaleIn}>
+                    <motion.li
+                      className="flex items-center gap-4 bg-[#F8FAFC] border border-[#E6E9ED] rounded-xl p-4"
+                      whileHover={{
+                        y: -3,
+                        boxShadow: "0 12px 32px -8px rgba(0,87,184,0.12)",
+                        borderColor: "rgba(0,87,184,0.25)",
+                      }}
+                      transition={{ type: "spring", stiffness: 300, damping: 22 }}
+                    >
+                      <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center shrink-0">
+                        <BIcon className="w-5 h-5 text-[#0057B8]" />
+                      </div>
+                      <span className="text-gray-700 font-inter font-medium text-sm">{text}</span>
+                      <CheckCircle2 className="w-5 h-5 text-[#10B981] shrink-0 ml-auto" />
+                    </motion.li>
+                  </ScrollReveal>
+                ))}
+              </ul>
+            </ScrollReveal>
+
+            {/* Coverages */}
+            <ScrollReveal>
+              <h3 className="font-manrope font-extrabold text-2xl text-[#1F2937] mb-7">Coberturas incluidas</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {coverages.map(({ title, desc, icon: CIcon }, i) => (
+                  <ScrollReveal key={title} custom={i} variants={scaleIn}>
+                    <motion.div
+                      className="group bg-[#F8FAFC] border border-[#E6E9ED] rounded-2xl p-5 relative overflow-hidden"
+                      whileHover={{
+                        y: -5,
+                        boxShadow: "0 20px 40px -10px rgba(0,87,184,0.15)",
+                        borderColor: "rgba(0,87,184,0.3)",
+                      }}
+                      transition={{ type: "spring", stiffness: 300, damping: 22 }}
+                    >
+                      {/* Top accent */}
+                      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#003f8a] to-[#0077e6] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <motion.div
+                        className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-3"
+                        whileHover={{ scale: 1.12, backgroundColor: "#0057B8" }}
+                        transition={{ duration: 0.25 }}
+                      >
+                        <CIcon className="w-5 h-5 text-[#0057B8] group-hover:text-white transition-colors duration-200" />
+                      </motion.div>
+                      <span className="font-manrope font-bold text-[#1F2937] text-sm block mb-1">{title}</span>
+                      <p className="text-gray-500 text-xs font-inter leading-relaxed">{desc}</p>
+                    </motion.div>
+                  </ScrollReveal>
+                ))}
+              </div>
+            </ScrollReveal>
+          </div>
+        </div>
+      </section>
+
+      {/* ── ADVISOR SECTION ───────────────────────────── */}
+      <section className="section-padding bg-[#F8FAFC]">
+        <div className="container-wide">
+          <ScrollReveal>
+            <div className="bg-white border border-[#E6E9ED] rounded-2xl p-8 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+              <div>
+                <span className="inline-block bg-blue-50 text-[#0057B8] text-sm font-inter font-semibold px-4 py-1.5 rounded-full mb-5">
+                  Asesoría 100% personalizada
+                </span>
+                <h3 className="font-manrope font-extrabold text-3xl text-[#1F2937] mb-4 leading-snug">
+                  Un experto te guía en<br />cada paso del proceso
+                </h3>
+                <p className="text-gray-500 font-inter text-base leading-relaxed mb-7">
+                  No estás solo. Un asesor especializado en {label.toLowerCase()} te acompaña desde la cotización hasta que recibes tu póliza, y siempre que lo necesites después.
+                </p>
+                <div className="space-y-3 mb-8">
+                  {[
+                    "Asesoría gratis y sin compromiso",
+                    "Comparativa de múltiples aseguradoras",
+                    "Gestión y envío de tu póliza",
+                    "Acompañamiento en siniestros",
+                  ].map((item, i) => (
+                    <ScrollReveal key={item} custom={i}>
+                      <div className="flex items-center gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-[#10B981] shrink-0" />
+                        <span className="text-gray-600 font-inter text-sm">{item}</span>
+                      </div>
+                    </ScrollReveal>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                    <motion.div
+                      whileHover={{ scale: 1.04, y: -2 }}
+                      whileTap={{ scale: 0.97 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                      className="inline-block"
+                    >
+                      <Button className="bg-[#0057B8] hover:bg-[#004a9e] text-white rounded-xl px-6 h-11 font-inter shadow-lg shadow-blue-900/20 transition-colors duration-200">
+                        <Phone className="mr-2 w-4 h-4" /> Cotizar con asesor
+                      </Button>
+                    </motion.div>
+                  </a>
+                  <a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                    <motion.div
+                      whileHover={{ scale: 1.04, y: -2 }}
+                      whileTap={{ scale: 0.97 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                      className="inline-block"
+                    >
+                      <Button variant="outline" className="border-gray-200 text-gray-700 hover:border-[#0057B8] hover:text-[#0057B8] rounded-xl h-11 font-inter transition-colors duration-200">
+                        <Phone className="mr-2 w-4 h-4" /> Hablar con asesor
+                      </Button>
+                    </motion.div>
+                  </a>
+                </div>
+              </div>
+              <div className="relative h-64 md:h-80 rounded-2xl overflow-hidden shadow-xl">
+                <img className="w-full h-full object-cover" src={img_url} alt={`Asesor de seguro de ${label}`} />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#001133]/40 via-transparent to-transparent" />
+                {/* Floating badge */}
+                <motion.div
+                  className="absolute bottom-4 left-4 right-4"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.6 }}
+                >
+                  <div className="glass-card rounded-xl px-4 py-3 flex items-center gap-3">
+                    <div className="w-9 h-9 bg-[#0057B8] rounded-lg flex items-center justify-center shrink-0">
+                      <Icon className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <div className="font-manrope font-bold text-[#1F2937] text-sm">Seguro de {label}</div>
+                      <div className="text-gray-500 text-xs font-inter">Cotización gratis en 1 minuto</div>
+                    </div>
+                    <div className="ml-auto flex items-center gap-1">
+                      <Star className="w-3.5 h-3.5 fill-[#F59E0B] text-[#F59E0B]" />
+                      <span className="text-xs font-inter font-semibold text-gray-600">4.9</span>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ── FINANCING BANNER ──────────────────────────── */}
+      <ScrollReveal>
+        <section className="py-10 relative overflow-hidden" style={{ background: "{DARK}" }}>
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.06) 50%, transparent 60%)" }}
+            animate={{ x: ["-100%", "200%"] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear", repeatDelay: 3 }}
+          />
+          <div className="container-wide relative z-10">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="flex items-start gap-5">
+                <div className="w-14 h-14 bg-white/15 rounded-2xl flex items-center justify-center shrink-0 border border-white/20">
+                  <ShieldCheck className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <div className="inline-flex items-center gap-1.5 bg-white/20 text-white text-xs font-inter font-semibold px-3 py-1 rounded-full mb-2">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> Beneficio exclusivo
+                  </div>
+                  <h3 className="font-manrope font-extrabold text-xl md:text-2xl text-white mb-1">
+                    ¿Necesitas financiar tu póliza de {label}?
+                  </h3>
+                  <p className="text-blue-100 font-inter text-sm md:text-base leading-relaxed max-w-lg">
+                    Ofrecemos opciones de <strong className="text-white">financiación flexible</strong> para que puedas pagar tu seguro en cuotas cómodas sin comprometer tu presupuesto.
+                  </p>
+                </div>
+              </div>
+              <div className="shrink-0">
+                <a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                  <motion.div
+                    whileHover={{ scale: 1.06, y: -2 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                    className="inline-block"
+                  >
+                    <Button className="bg-white text-[#0057B8] hover:bg-blue-50 rounded-xl px-7 h-12 font-inter font-semibold text-sm shadow-xl shadow-blue-900/30 whitespace-nowrap transition-colors duration-200">
+                      <Phone className="mr-2 w-4 h-4" /> Consultar financiación
+                    </Button>
+                  </motion.div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* ── FAQs ──────────────────────────────────────── */}
+      <section className="section-padding bg-white">
+        <div className="container-wide">
+          <ScrollReveal className="text-center mb-12">
+            <span className="inline-block bg-blue-50 text-[#0057B8] text-sm font-inter font-semibold px-4 py-1.5 rounded-full mb-4">
+              Resolvemos tus dudas
+            </span>
+            <h2 className="font-manrope font-extrabold text-4xl text-[#1F2937] mb-3">
+              Preguntas frecuentes
+            </h2>
+            <p className="text-gray-500 font-inter text-lg max-w-xl mx-auto">
+              Todo lo que necesitas saber sobre el seguro de {label} antes de contratar.
+            </p>
+          </ScrollReveal>
+
+          <div className="max-w-3xl mx-auto space-y-3">
+            {faqs.map(({ q, a }, i) => (
+              <ScrollReveal key={q} custom={i}>
+                <motion.details
+                  className="bg-[#F8FAFC] border border-[#E6E9ED] rounded-2xl group overflow-hidden"
+                  whileHover={{ borderColor: "rgba(0,87,184,0.25)" }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <summary className="flex items-center justify-between p-5 cursor-pointer font-manrope font-semibold text-[#1F2937] text-base list-none gap-4">
+                    <span className="flex items-center gap-3">
+                      <span className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center shrink-0">
+                        <ChevronRight className="w-4 h-4 text-[#0057B8] group-open:rotate-90 transition-transform duration-200" />
+                      </span>
+                      {q}
+                    </span>
+                  </summary>
+                  <div className="px-5 pb-5 pl-[60px] text-gray-500 text-sm font-inter leading-relaxed">{a}</div>
+                </motion.details>
+              </ScrollReveal>
+            ))}
+          </div>
+
+          {/* FAQ CTA */}
+          <ScrollReveal className="mt-10">
+            <motion.div
+              className="bg-[#F8FAFC] border border-[#E6E9ED] rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-3xl mx-auto"
+              whileHover={{ boxShadow: "0 12px 32px -8px rgba(0,87,184,0.1)" }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-5 h-5 text-[#0057B8]" />
+                </div>
+                <p className="text-gray-600 font-inter text-sm">
+                  ¿Tienes más preguntas? Consulta todas las{" "}
+                  <Link href="/faq" className="text-[#0057B8] font-semibold hover:underline">
+                    preguntas frecuentes
+                  </Link>{" "}
+                  o habla directamente con un asesor.
+                </p>
+              </div>
+              <a href={waUrl()} target="_blank" rel="noopener noreferrer" className="shrink-0">
+                <Button variant="outline" className="border-[#0057B8] text-[#0057B8] hover:bg-blue-50 rounded-xl h-10 px-5 font-inter text-sm transition-colors duration-200 whitespace-nowrap">
+                  <Phone className="mr-2 w-4 h-4" /> Preguntar ahora
+                </Button>
+              </a>
+            </motion.div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ── FINAL CTA ─────────────────────────────────── */}
+      <section className="relative py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #001f4d 0%, #0057B8 45%, #0077e6 100%)" }}>
+          <motion.div
+            className="absolute top-0 right-0 w-96 h-96 bg-[#4DA3FF]/15 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none"
+            animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute bottom-0 left-0 w-80 h-80 bg-[#003f8a]/30 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl pointer-events-none"
+            animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+          />
+        </div>
+
+        <DotGrid className="z-[1]" opacity={0.35} />
+
+
+        <div className="container-wide relative z-10 text-center">
+          <ScrollReveal>
+            <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/25 text-white text-sm font-inter font-medium px-4 py-2 rounded-full mb-8">
+              <Icon className="w-4 h-4 text-[#4DA3FF]" />
+              Seguro de {label} — Sin costo de asesoría
+            </div>
+          </ScrollReveal>
+          <ScrollReveal custom={1}>
+            <h2 className="font-manrope font-extrabold text-4xl md:text-5xl text-white mb-5 leading-tight">
+              Cotiza tu seguro de {label}<br />ahora, es gratis
+            </h2>
+          </ScrollReveal>
+          <ScrollReveal custom={2}>
+            <p className="text-blue-200 font-inter text-lg mb-10 max-w-xl mx-auto leading-relaxed">
+              Sin compromiso, sin filas. Un asesor experto te contacta en minutos con las mejores opciones del mercado.
+            </p>
+          </ScrollReveal>
+          <ScrollReveal custom={3}>
+            <div className="flex flex-wrap justify-center gap-4">
+              <a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                <motion.div
+                  whileHover={{ scale: 1.06, y: -3 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="inline-block"
+                >
+                  <Button className="bg-white text-[#0057B8] hover:bg-blue-50 rounded-xl px-8 h-12 text-base font-inter font-semibold shadow-2xl shadow-blue-900/30 transition-colors duration-200">
+                    <Phone className="mr-2 w-4 h-4" /> Cotizar con un asesor
+                  </Button>
+                </motion.div>
+              </a>
+              <a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                <motion.div
+                  whileHover={{ scale: 1.04, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="inline-block"
+                >
+                  <Button variant="outline" className="bg-transparent border-white/50 text-white hover:bg-white/15 rounded-xl px-8 h-12 text-base font-inter transition-colors duration-200">
+                    <Phone className="mr-2 w-4 h-4" /> Hablar con asesor
+                  </Button>
+                </motion.div>
+              </a>
+            </div>
+          </ScrollReveal>
+
+          {/* Trust badges */}
+          <ScrollReveal custom={4}>
+            <div className="flex flex-wrap justify-center items-center gap-6 mt-10 text-sm font-inter">
+              {[
+                { icon: ShieldCheck, text: "Asesoría sin costo" },
+                { icon: CheckCircle2, text: "Mejores aseguradoras" },
+                { icon: Clock, text: "Respuesta inmediata" },
+              ].map(({ icon: TrustIcon, text }) => (
+                <span key={text} className="flex items-center gap-2 text-white/70">
+                  <span className="w-7 h-7 bg-white/15 rounded-full flex items-center justify-center">
+                    <TrustIcon className="w-3.5 h-3.5 text-[#4DA3FF]" />
+                  </span>
+                  {text}
+                </span>
+              ))}
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

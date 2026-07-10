@@ -1,0 +1,255 @@
+"use client";
+
+import Link from "next/link";
+import {
+  Phone, FileSearch, BarChart2, ShieldCheck, ArrowRight,
+  CheckCircle2, Users, CreditCard, Clock, Star, HeartHandshake, BadgeCheck
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { Reveal, WordHighlight, GlowOrbs } from "@/components/motion";
+import { Eyebrow } from "@/components/site/Eyebrow";
+import { DotGrid } from "@/components/site/DotGrid";
+
+const steps = [
+  {
+    num: 1,
+    icon: Phone,
+    title: "Contacto con tu asesor",
+    desc: "Te comunicamos con un asesor especializado según el tipo de seguro que necesitas. Sin bots, sin formularios automáticos — una persona real desde el primer momento.",
+    detail: "Disponibles por llamada, WhatsApp o correo electrónico.",
+    color: "bg-blue-50 text-[#0057B8]",
+  },
+  {
+    num: 2,
+    icon: FileSearch,
+    title: "Cotización personalizada",
+    desc: "Tu asesor analiza tu perfil, necesidades y presupuesto para preparar una cotización a tu medida con las mejores aseguradoras del mercado.",
+    detail: "Opciones de financiación disponibles para facilitar el pago de tu prima.",
+    color: "bg-blue-50 text-[#0057B8]",
+  },
+  {
+    num: 3,
+    icon: BarChart2,
+    title: "Comparación guiada",
+    desc: "Tu asesor te explica, lado a lado, las diferencias entre coberturas, exclusiones y precios para que tomes la mejor decisión con total claridad.",
+    detail: "Sin presiones, sin letras pequeñas. Claridad absoluta antes de firmar.",
+    color: "bg-blue-50 text-[#0057B8]",
+  },
+  {
+    num: 4,
+    icon: ShieldCheck,
+    title: "Emisión y envío de tu póliza",
+    desc: "Una vez elegida la opción ideal, tu asesor gestiona toda la documentación y te envía la póliza firmada con todo lo que necesitas para estar protegido.",
+    detail: "Tu póliza y certificados llegan a tu correo en menos de 24 horas.",
+    color: "bg-blue-50 text-[#0057B8]",
+  },
+];
+
+const advantages = [
+  { icon: Users, title: "Asesor dedicado", desc: "Un profesional real te acompaña en cada paso del proceso." },
+  { icon: HeartHandshake, title: "Atención personalizada", desc: "Soluciones a medida de tu perfil, no cotizaciones genéricas." },
+  { icon: CreditCard, title: "Apoyo en financiación", desc: "Te ayudamos a encontrar opciones de pago cómodas para tu prima." },
+  { icon: BadgeCheck, title: "Sin compromisos ocultos", desc: "Transparencia total antes de que firmes cualquier documento." },
+  { icon: Star, title: "Mejor relación cobertura-precio", desc: "Negociamos con más de 12 aseguradoras para darte el mejor trato." },
+  { icon: Clock, title: "Póliza en 24 horas", desc: "Gestión ágil para que tu protección empiece cuanto antes." },
+];
+
+export default function ComoFunciona() {
+  return (
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <Navbar />
+
+      {/* Hero */}
+      <section className="relative py-24 md:py-32 text-center overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img className="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_f2d498aeaa_f638941ddb6351b6.png" alt="business strategy process workflow, professionals collaborating around a modern whiteboard with char" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        </div>
+        <DotGrid className="z-[1]" opacity={0.4} />
+        <GlowOrbs className="z-[1]" />
+        <div className="container-wide relative z-10">
+          <Reveal className="mb-5 flex justify-center"><Eyebrow label="Asesoría 100% humana" icon={Users} tone="dark" /></Reveal>
+          <h1 className="font-manrope font-extrabold text-5xl md:text-6xl text-white mb-5 leading-tight drop-shadow-md">
+            Tu asesor te guía<br />en cada paso
+          </h1>
+          <p className="text-white/80 font-inter text-xl max-w-xl mx-auto leading-relaxed">
+            Nada de bots ni procesos automáticos. Desde el primer contacto hasta la entrega de tu póliza, un asesor experto está contigo.
+          </p>
+        </div>
+      </section>
+
+      {/* Steps */}
+      <section className="section-padding bg-white">
+        <div className="container-wide">
+          <div className="text-center mb-14">
+            <h2 className="font-manrope font-extrabold text-4xl text-[#1F2937] mb-3">
+              El proceso de tu asesoría
+            </h2>
+            <p className="text-gray-500 font-inter text-lg max-w-lg mx-auto">
+              Simple, transparente y con acompañamiento humano en cada etapa.
+            </p>
+          </div>
+          <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-8">
+            {steps.map(({ num, icon: Icon, title, desc, detail, color }, i) => (
+              <div key={num} className="relative group">
+                {i < steps.length - 1 && (
+                  <div className="hidden lg:block absolute top-10 left-full w-full h-0.5 bg-[#E6E9ED] -translate-x-4 z-0">
+                    <ArrowRight className="absolute right-0 -top-3 w-6 h-6 text-[#0057B8] opacity-40" />
+                  </div>
+                )}
+                <div className={`w-14 h-14 ${color} rounded-2xl flex items-center justify-center mb-5 relative z-10 group-hover:bg-[#0057B8] group-hover:text-white transition-colors duration-200`}>
+                  <Icon className="w-7 h-7" />
+                </div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-7 h-7 rounded-full bg-[#0057B8] text-white text-xs font-bold flex items-center justify-center font-inter shrink-0">
+                    {num}
+                  </div>
+                  <h3 className="font-manrope font-bold text-xl text-[#1F2937]">{title}</h3>
+                </div>
+                <p className="text-gray-500 font-inter text-sm leading-relaxed mb-3">{desc}</p>
+                <p className="text-[#0057B8] font-inter text-xs font-semibold flex items-start gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 mt-0.5 shrink-0" /> {detail}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Financing highlight */}
+      <section className="bg-gradient-to-r from-[#0057B8] to-[#0040A0] py-14">
+        <div className="container-wide">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="text-center md:text-left max-w-xl">
+              <div className="inline-flex items-center gap-2 bg-white/15 text-blue-100 text-sm font-inter px-4 py-1.5 rounded-full mb-4">
+                <CreditCard className="w-4 h-4" /> Apoyo en financiación
+              </div>
+              <h2 className="font-manrope font-extrabold text-3xl md:text-4xl text-white mb-3">
+                Paga tu seguro como más te convenga
+              </h2>
+              <p className="text-blue-100 font-inter text-base leading-relaxed">
+                Tu asesor te orienta sobre las opciones de financiación disponibles para que el pago de tu prima no sea un obstáculo. Cuotas mensuales, diferidos o pago único — encontramos la modalidad que mejor se adapta a tu economía.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 gap-4 w-full md:w-auto md:min-w-[280px]">
+              {[
+                { icon: CheckCircle2, text: "Cuotas mensuales sin intereses*" },
+                { icon: CheckCircle2, text: "Financiación directa con aseguradora" },
+                { icon: CheckCircle2, text: "Asesoría para elegir el mejor plan de pago" },
+                { icon: CheckCircle2, text: "Sin penalización por cancelación anticipada" },
+              ].map(({ icon: Icon, text }) => (
+                <div key={text} className="flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3">
+                  <Icon className="w-5 h-5 text-white shrink-0" />
+                  <span className="text-white font-inter text-sm">{text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section className="bg-[#F8FAFC] py-14 border-y border-[#E6E9ED]">
+        <div className="container-wide">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {[
+              { val: "+12", label: "Aseguradoras aliadas" },
+              { val: "+5.000", label: "Clientes asesorados" },
+              { val: "24h", label: "Entrega de póliza" },
+              { val: "98%", label: "Satisfacción del cliente" },
+            ].map(({ val, label }) => (
+              <div key={label}>
+                <div className="font-manrope font-extrabold text-4xl text-[#0057B8] mb-1">{val}</div>
+                <div className="text-gray-500 text-sm font-inter">{label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Advantages */}
+      <section className="section-padding bg-white">
+        <div className="container-wide">
+          <div className="text-center mb-12">
+            <h2 className="font-manrope font-extrabold text-4xl text-[#1F2937] mb-3">
+              ¿Por qué asesorarte con nosotros?
+            </h2>
+            <p className="text-gray-500 font-inter text-lg max-w-lg mx-auto">
+              Más que un intermediario, somos el aliado que te acompaña en cada decisión
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {advantages.map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="bg-[#F8FAFC] border border-[#E6E9ED] rounded-2xl p-6 flex gap-4 hover:border-[#0057B8] hover:shadow-md transition-all duration-200">
+                <div className="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center shrink-0">
+                  <Icon className="w-5 h-5 text-[#0057B8]" />
+                </div>
+                <div>
+                  <h3 className="font-manrope font-bold text-[#1F2937] mb-1">{title}</h3>
+                  <p className="text-gray-500 text-sm font-inter leading-relaxed">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonial highlight */}
+      <section className="bg-[#F8FAFC] py-14 border-t border-[#E6E9ED]">
+        <div className="container-wide">
+          <div className="max-w-3xl mx-auto bg-white rounded-2xl border border-[#E6E9ED] shadow-sm p-8 md:p-12 text-center">
+            <div className="flex justify-center mb-4">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <Star key={s} className="w-5 h-5 text-[#F59E0B] fill-[#F59E0B]" />
+              ))}
+            </div>
+            <blockquote className="font-manrope font-semibold text-xl md:text-2xl text-[#1F2937] leading-relaxed mb-6">
+              "Mi asesora fue increíble. Me explicó cada opción con paciencia, me ayudó a encontrar un plan de financiación y tenía mi póliza al día siguiente. Nunca pensé que contratar un seguro podía ser tan fácil."
+            </blockquote>
+            <div className="flex items-center justify-center gap-3">
+              <img
+                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg"
+                alt="Cliente satisfecha"
+                className="w-10 h-10 rounded-full object-cover"
+              />
+              <div className="text-left">
+                <p className="font-inter font-semibold text-[#1F2937] text-sm">Laura M.</p>
+                <p className="text-gray-400 text-xs font-inter">Seguro de vida · Cliente desde 2023</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-[#0057B8] py-16">
+        <div className="container-wide text-center">
+          <h2 className="font-manrope font-extrabold text-4xl text-white mb-4">
+            ¿Listo para hablar con tu asesor?
+          </h2>
+          <p className="text-blue-200 font-inter text-lg mb-8 max-w-md mx-auto">
+            Sin formularios automáticos. Un experto real te atiende y prepara tu cotización personalizada.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link href="/contacto">
+              <Button className="bg-white text-[#0057B8] hover:bg-blue-50 rounded-xl px-9 h-12 text-base font-inter font-semibold shadow-lg">
+                Hablar con un asesor <ArrowRight className="ml-2 w-4 h-4" />
+              </Button>
+            </Link>
+            <Link href="/cotizar">
+              <Button variant="outline" className="bg-transparent border-white/40 text-white hover:bg-white/10 rounded-xl px-9 h-12 text-base font-inter font-semibold">
+                Solicitar cotización
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

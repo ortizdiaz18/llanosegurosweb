@@ -1,0 +1,335 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import {
+  Car, Bike, Activity, Heart, Home, Building2,
+  ChevronRight, CheckCircle2, User, Phone, Mail, FileText, MessageSquare
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { WordHighlight } from "@/components/motion";
+import { Eyebrow } from "@/components/site/Eyebrow";
+import { waUrl } from "@/lib/whatsapp";
+
+const insuranceTypes = [
+  { id: "auto", label: "Auto", icon: Car },
+  { id: "moto", label: "Moto", icon: Bike },
+  { id: "salud", label: "Salud", icon: Activity },
+  { id: "vida", label: "Vida", icon: Heart },
+  { id: "hogar", label: "Hogar", icon: Home },
+  { id: "empresarial", label: "Empresarial", icon: Building2 },
+];
+
+const steps = ["Tipo de seguro", "Datos personales", "Detalles", "Confirmar"];
+
+type FormData = {
+  type: string;
+  name: string;
+  email: string;
+  phone: string;
+  plate: string;
+  year: string;
+  city: string;
+};
+
+export default function Cotizar() {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [form, setForm] = useState<FormData>({
+    type: "auto",
+    name: "",
+    email: "",
+    phone: "",
+    plate: "",
+    year: "",
+    city: "",
+  });
+
+  const handleNext = () => {
+    if (currentStep < steps.length - 1) setCurrentStep((s) => s + 1);
+  };
+
+  const handleBack = () => {
+    if (currentStep > 0) setCurrentStep((s) => s - 1);
+  };
+
+  const handleSubmit = () => {
+    const typeLabel = insuranceTypes.find((t) => t.id === form.type)?.label || form.type;
+    const message =
+      `Hola, quiero cotizar un seguro con Llano Seguros.\n\n` +
+      `Tipo de seguro: ${typeLabel}\n` +
+      `Nombre: ${form.name}\n` +
+      `Correo: ${form.email}\n` +
+      `Teléfono: ${form.phone}\n` +
+      (form.plate ? `Placa: ${form.plate}\n` : "") +
+      (form.year ? `Año del vehículo: ${form.year}\n` : "") +
+      (form.city ? `Ciudad: ${form.city}\n` : "");
+    window.open(waUrl(message), "_blank", "noopener,noreferrer");
+  };
+
+  const progress = ((currentStep + 1) / steps.length) * 100;
+
+  return (
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <Navbar />
+
+      <section className="section-padding">
+        <div className="container-wide">
+          <div className="max-w-2xl mx-auto">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="mb-4 flex justify-center"><Eyebrow label="Cotizador" icon={MessageSquare} /></div><h1 className="font-manrope font-extrabold text-4xl text-[#1F2937] mb-2"><WordHighlight text="Cotizador de **seguros**" /></h1>
+              <p className="text-gray-500 font-inter">Completa el formulario y obtén tu cotización en minutos.</p>
+            </div>
+
+            {/* Progress */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-3">
+                {steps.map((step, i) => (
+                  <div key={step} className="flex flex-col items-center gap-1 flex-1">
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-inter transition-all ${
+                        i < currentStep
+                          ? "bg-[#10B981] text-white"
+                          : i === currentStep
+                          ? "bg-[#0057B8] text-white"
+                          : "bg-[#E6E9ED] text-gray-400"
+                      }`}
+                    >
+                      {i < currentStep ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
+                    </div>
+                    <span className={`text-xs font-inter hidden sm:block ${i === currentStep ? "text-[#0057B8] font-medium" : "text-gray-400"}`}>
+                      {step}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="w-full bg-[#E6E9ED] rounded-full h-1.5">
+                <div
+                  className="bg-[#0057B8] h-1.5 rounded-full transition-all duration-500"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Form Card */}
+            <div className="bg-white border border-[#E6E9ED] rounded-2xl p-7 md:p-9 shadow-sm">
+
+              {/* Step 0: Insurance Type */}
+              {currentStep === 0 && (
+                <div>
+                  <h2 className="font-manrope font-bold text-2xl text-[#1F2937] mb-2">
+                    ¿Qué quieres asegurar?
+                  </h2>
+                  <p className="text-gray-500 font-inter text-sm mb-6">Selecciona el tipo de seguro que necesitas.</p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    {insuranceTypes.map(({ id, label, icon: Icon }) => (
+                      <button
+                        key={id}
+                        onClick={() => setForm({ ...form, type: id })}
+                        className={`flex flex-col items-center gap-2 p-5 rounded-xl border-2 transition-all ${
+                          form.type === id
+                            ? "border-[#0057B8] bg-blue-50 text-[#0057B8]"
+                            : "border-[#E6E9ED] text-gray-500 hover:border-[#0057B8]/40"
+                        }`}
+                      >
+                        <Icon className="w-7 h-7" />
+                        <span className="font-inter font-medium text-sm">{label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Step 1: Personal Data */}
+              {currentStep === 1 && (
+                <div>
+                  <h2 className="font-manrope font-bold text-2xl text-[#1F2937] mb-2">Datos personales</h2>
+                  <p className="text-gray-500 font-inter text-sm mb-6">
+                    Para personalizar tu cotización necesitamos algunos datos básicos.
+                  </p>
+                  <div className="space-y-5">
+                    <div>
+                      <Label className="font-inter text-sm text-gray-700 font-medium mb-1.5 block">
+                        <User className="inline w-3.5 h-3.5 mr-1" /> Nombre completo *
+                      </Label>
+                      <Input
+                        required
+                        className="rounded-xl border-[#E6E9ED] h-11 font-inter"
+                        placeholder="Tu nombre completo"
+                        value={form.name}
+                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <Label className="font-inter text-sm text-gray-700 font-medium mb-1.5 block">
+                        <Mail className="inline w-3.5 h-3.5 mr-1" /> Correo electrónico *
+                      </Label>
+                      <Input
+                        required
+                        type="email"
+                        className="rounded-xl border-[#E6E9ED] h-11 font-inter"
+                        placeholder="tu@correo.com"
+                        value={form.email}
+                        onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <Label className="font-inter text-sm text-gray-700 font-medium mb-1.5 block">
+                        <Phone className="inline w-3.5 h-3.5 mr-1" /> Teléfono *
+                      </Label>
+                      <Input
+                        required
+                        type="tel"
+                        className="rounded-xl border-[#E6E9ED] h-11 font-inter"
+                        placeholder="+57 300 000 0000"
+                        value={form.phone}
+                        onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 2: Details */}
+              {currentStep === 2 && (
+                <div>
+                  <h2 className="font-manrope font-bold text-2xl text-[#1F2937] mb-2">Detalles del seguro</h2>
+                  <p className="text-gray-500 font-inter text-sm mb-6">
+                    Cuéntanos más sobre lo que quieres asegurar.
+                  </p>
+                  <div className="space-y-5">
+                    {(form.type === "auto" || form.type === "moto") && (
+                      <>
+                        <div>
+                          <Label className="font-inter text-sm text-gray-700 font-medium mb-1.5 block">
+                            <FileText className="inline w-3.5 h-3.5 mr-1" /> Placa del vehículo *
+                          </Label>
+                          <Input
+                            required
+                            className="rounded-xl border-[#E6E9ED] h-11 font-inter uppercase"
+                            placeholder="ABC 123"
+                            value={form.plate}
+                            onChange={(e) => setForm({ ...form, plate: e.target.value.toUpperCase() })}
+                          />
+                        </div>
+                        <div>
+                          <Label className="font-inter text-sm text-gray-700 font-medium mb-1.5 block">
+                            Año del vehículo *
+                          </Label>
+                          <Input
+                            required
+                            className="rounded-xl border-[#E6E9ED] h-11 font-inter"
+                            placeholder="2022"
+                            value={form.year}
+                            onChange={(e) => setForm({ ...form, year: e.target.value })}
+                          />
+                        </div>
+                      </>
+                    )}
+                    <div>
+                      <Label className="font-inter text-sm text-gray-700 font-medium mb-1.5 block">
+                        Ciudad de residencia *
+                      </Label>
+                      <Input
+                        required
+                        className="rounded-xl border-[#E6E9ED] h-11 font-inter"
+                        placeholder="Bogotá"
+                        value={form.city}
+                        onChange={(e) => setForm({ ...form, city: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Confirm */}
+              {currentStep === 3 && (
+                <div>
+                  <h2 className="font-manrope font-bold text-2xl text-[#1F2937] mb-2">Confirmar solicitud</h2>
+                  <p className="text-gray-500 font-inter text-sm mb-6">
+                    Revisa tus datos antes de enviar la solicitud por WhatsApp.
+                  </p>
+                  <div className="bg-[#F8FAFC] border border-[#E6E9ED] rounded-xl p-5 space-y-3 mb-6">
+                    {[
+                      { label: "Tipo de seguro", value: insuranceTypes.find((t) => t.id === form.type)?.label || form.type },
+                      { label: "Nombre", value: form.name || "No indicado" },
+                      { label: "Email", value: form.email || "No indicado" },
+                      { label: "Teléfono", value: form.phone || "No indicado" },
+                      ...(form.plate ? [{ label: "Placa", value: form.plate }] : []),
+                      ...(form.year ? [{ label: "Año vehículo", value: form.year }] : []),
+                      ...(form.city ? [{ label: "Ciudad", value: form.city }] : []),
+                    ].map(({ label, value }) => (
+                      <div key={label} className="flex justify-between text-sm">
+                        <span className="text-gray-500 font-inter">{label}</span>
+                        <span className="text-[#1F2937] font-inter font-medium">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <input type="checkbox" id="terms" className="mt-1 accent-[#0057B8]" required />
+                    <label htmlFor="terms" className="text-xs text-gray-500 font-inter">
+                      Acepto los{" "}
+                      <Link href="/terminos" className="text-[#0057B8] hover:underline">
+                        Términos y condiciones
+                      </Link>{" "}
+                      y la{" "}
+                      <Link href="/privacidad" className="text-[#0057B8] hover:underline">
+                        Política de privacidad
+                      </Link>{" "}
+                      de Llano Seguros.
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* Navigation */}
+              <div className="flex items-center justify-between mt-8 pt-6 border-t border-[#E6E9ED]">
+                {currentStep > 0 ? (
+                  <Button
+                    variant="outline"
+                    onClick={handleBack}
+                    className="border-[#E6E9ED] text-gray-700 rounded-xl font-inter"
+                  >
+                    Atrás
+                  </Button>
+                ) : (
+                  <div />
+                )}
+                {currentStep < steps.length - 1 ? (
+                  <Button
+                    onClick={handleNext}
+                    className="bg-[#0057B8] hover:bg-[#004a9e] text-white rounded-xl px-7 font-inter"
+                  >
+                    Siguiente <ChevronRight className="ml-1 w-4 h-4" />
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleSubmit}
+                    className="bg-[#10B981] hover:bg-[#059669] text-white rounded-xl px-7 font-inter"
+                  >
+                    Enviar por WhatsApp <MessageSquare className="ml-1 w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* Trust indicators */}
+            <div className="flex flex-wrap justify-center gap-5 mt-6">
+              {["Sin compromiso", "Sin datos de tarjeta", "100% seguro", "Gratis"].map((item) => (
+                <span key={item} className="flex items-center gap-1.5 text-xs text-gray-500 font-inter">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981]" /> {item}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

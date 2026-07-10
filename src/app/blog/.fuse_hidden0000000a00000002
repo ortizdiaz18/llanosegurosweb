@@ -1,0 +1,248 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Search, Clock, ArrowRight, Tag } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { Reveal, WordHighlight, GlowOrbs } from "@/components/motion";
+import { Eyebrow } from "@/components/site/Eyebrow";
+import { DotGrid } from "@/components/site/DotGrid";
+
+const categories = ["Todos", "Auto", "Vida", "Salud", "Hogar", "Empresarial", "Consejos"];
+
+const articles = [
+  {
+    id: "1",
+    img_url: "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_2045185570_0e4ff305386b86a3.png",
+    title: "¿Cómo elegir el mejor seguro de auto en Colombia?",
+    excerpt: "Guía completa para entender las coberturas, comparar precios y tomar la mejor decisión para tu vehículo.",
+    category: "Auto",
+    date: "12 ene 2026",
+    readTime: "5 min",
+    featured: true,
+  },
+  {
+    id: "2",
+    img_url: "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_11cac4908a_7640b810e980798d.png",
+    title: "Todo lo que debes saber sobre el seguro de vida",
+    excerpt: "Descubre por qué el seguro de vida es la inversión más importante para proteger el futuro de tu familia.",
+    category: "Vida",
+    date: "8 ene 2026",
+    readTime: "6 min",
+    featured: false,
+  },
+  {
+    id: "3",
+    img_url: "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_d4ea7d44ee_ace24dd049a6dafc.png",
+    title: "Diferencias entre seguro de salud y medicina prepagada",
+    excerpt: "Resolvemos la confusión más común entre los colombianos y te ayudamos a elegir la opción correcta.",
+    category: "Salud",
+    date: "5 ene 2026",
+    readTime: "4 min",
+    featured: false,
+  },
+  {
+    id: "4",
+    img_url: "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_9dde51fef4_0bcb2b02d7ec289a.png",
+    title: "5 razones para asegurar tu hogar hoy mismo",
+    excerpt: "El seguro de hogar no es un lujo, es una necesidad. Te explicamos por qué con datos reales.",
+    category: "Hogar",
+    date: "2 ene 2026",
+    readTime: "3 min",
+    featured: false,
+  },
+  {
+    id: "5",
+    img_url: "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_ccc4d3190a_10bcc100386c33d9.png",
+    title: "Seguros empresariales: qué necesita tu pyme",
+    excerpt: "Conoce las coberturas esenciales que toda empresa pequeña y mediana debería tener.",
+    category: "Empresarial",
+    date: "28 dic 2025",
+    readTime: "7 min",
+    featured: false,
+  },
+  {
+    id: "6",
+    img_url: "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_4591e15e71_b854c861b4ab3112.png",
+    title: "10 errores comunes al contratar un seguro",
+    excerpt: "Evita estos errores frecuentes y asegúrate de obtener la cobertura que realmente necesitas.",
+    category: "Consejos",
+    date: "20 dic 2025",
+    readTime: "5 min",
+    featured: false,
+  },
+];
+
+export default function Blog() {
+  const [activeCategory, setActiveCategory] = useState("Todos");
+  const [search, setSearch] = useState("");
+
+  const filtered = articles.filter(
+    (a) =>
+      (activeCategory === "Todos" || a.category === activeCategory) &&
+      (a.title.toLowerCase().includes(search.toLowerCase()) || a.excerpt.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  const featured = filtered.find((a) => a.featured) || filtered[0];
+  const rest = filtered.filter((a) => a.id !== featured?.id);
+
+  return (
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <Navbar />
+
+      {/* Hero */}
+      <section className="relative overflow-hidden gradient-brand py-16 md:py-24">
+        <DotGrid className="z-[1]" opacity={0.4} />
+        <GlowOrbs className="z-[1]" />
+        <div className="container-wide relative z-10">
+          <div className="max-w-2xl">
+            <Reveal className="mb-4"><Eyebrow label="Blog" icon={Tag} tone="dark" /></Reveal>
+            <Reveal delay={0.1}>
+              <h1 className="font-manrope font-extrabold text-5xl text-white mb-3">
+                <WordHighlight text="Blog de **seguros**" highlightClassName="text-[#4DA3FF] underline decoration-[#4DA3FF]/40 underline-offset-[8px] decoration-4" />
+              </h1>
+            </Reveal>
+            <Reveal delay={0.15}>
+              <p className="text-white/80 font-inter text-lg mb-6">
+                Guías, consejos y novedades del mundo asegurador para que tomes las mejores decisiones.
+              </p>
+            </Reveal>
+            <div className="relative max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
+              <Input
+                className="pl-10 rounded-xl border-white/20 bg-white/10 text-white placeholder:text-white/50 font-inter h-11 focus-visible:ring-white/30"
+                placeholder="Buscar artículos..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Categories */}
+      <section className="bg-white border-b border-[#E6E9ED] py-4">
+        <div className="container-wide">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-4 py-2 rounded-xl text-sm font-inter font-medium whitespace-nowrap transition-colors shrink-0 ${
+                  activeCategory === cat
+                    ? "bg-[#0057B8] text-white"
+                    : "bg-[#F8FAFC] text-gray-600 hover:bg-blue-50 hover:text-[#0057B8] border border-[#E6E9ED]"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section-padding">
+        <div className="container-wide">
+          {/* Featured Article */}
+          {featured && (
+            <div className="mb-10">
+              <Link href={`/blog/${featured.id}`} className="group block">
+                <div className="bg-white border border-[#E6E9ED] rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 grid grid-cols-1 lg:grid-cols-2">
+                  <div className="relative h-60 lg:h-80 overflow-hidden">
+                    <img src={featured.img_url} alt={featured.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute top-4 left-4">
+                      <span className="bg-[#0057B8] text-white text-xs font-inter font-semibold px-3 py-1 rounded-full">
+                        Destacado
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-8 flex flex-col justify-center">
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className="flex items-center gap-1 text-xs font-inter font-medium text-[#0057B8] bg-blue-50 px-2.5 py-1 rounded-full">
+                        <Tag className="w-3 h-3" /> {featured.category}
+                      </span>
+                      <span className="flex items-center gap-1 text-xs text-gray-400 font-inter">
+                        <Clock className="w-3 h-3" /> {featured.readTime}
+                      </span>
+                    </div>
+                    <h2 className="font-manrope font-extrabold text-2xl md:text-3xl text-[#1F2937] mb-3 group-hover:text-[#0057B8] transition-colors">
+                      {featured.title}
+                    </h2>
+                    <p className="text-gray-500 font-inter leading-relaxed mb-5">{featured.excerpt}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-400 text-sm font-inter">{featured.date}</span>
+                      <span className="flex items-center gap-1 text-[#0057B8] text-sm font-inter font-medium">
+                        Leer más <ArrowRight className="w-4 h-4" />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          )}
+
+          {/* Articles Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {rest.map((article) => (
+              <Link key={article.id} href={`/blog/${article.id}`} className="group block">
+                <div className="bg-white border border-[#E6E9ED] rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 h-full flex flex-col">
+                  <div className="relative h-48 overflow-hidden">
+                    <img src={article.img_url} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  </div>
+                  <div className="p-5 flex flex-col flex-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="flex items-center gap-1 text-xs font-inter font-medium text-[#0057B8] bg-blue-50 px-2.5 py-1 rounded-full">
+                        <Tag className="w-3 h-3" /> {article.category}
+                      </span>
+                      <span className="flex items-center gap-1 text-xs text-gray-400 font-inter">
+                        <Clock className="w-3 h-3" /> {article.readTime}
+                      </span>
+                    </div>
+                    <h3 className="font-manrope font-bold text-lg text-[#1F2937] mb-2 group-hover:text-[#0057B8] transition-colors flex-1">
+                      {article.title}
+                    </h3>
+                    <p className="text-gray-500 text-sm font-inter leading-relaxed mb-4 line-clamp-2">{article.excerpt}</p>
+                    <div className="flex items-center justify-between mt-auto">
+                      <span className="text-gray-400 text-xs font-inter">{article.date}</span>
+                      <span className="flex items-center gap-1 text-[#0057B8] text-xs font-inter font-medium">
+                        Leer más <ArrowRight className="w-3 h-3" />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {filtered.length === 0 && (
+            <div className="text-center py-16">
+              <p className="text-gray-400 font-inter text-lg">No se encontraron artículos.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Newsletter */}
+      <section className="bg-[#1F2937] py-14">
+        <div className="container-wide text-center max-w-lg mx-auto">
+          <h2 className="font-manrope font-extrabold text-3xl text-white mb-3">Suscríbete a nuestro newsletter</h2>
+          <p className="text-gray-400 font-inter mb-6">Recibe los mejores consejos de seguros directo en tu correo.</p>
+          <div className="flex gap-3 flex-col sm:flex-row">
+            <Input
+              className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-gray-400 rounded-xl h-11 font-inter"
+              placeholder="tu@correo.com"
+            />
+            <Button className="bg-[#0057B8] hover:bg-[#004a9e] text-white rounded-xl h-11 px-6 font-inter shrink-0">
+              Suscribirme
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

@@ -1,0 +1,165 @@
+"use client";
+
+import Link from "next/link";
+import { ArrowRight, CheckCircle2, Award } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { Reveal, WordHighlight, GlowOrbs } from "@/components/motion";
+import { Eyebrow } from "@/components/site/Eyebrow";
+import { DotGrid } from "@/components/site/DotGrid";
+
+const partners = [
+  {
+    name: "SURA",
+    tagline: "Aseguradora líder en Colombia y Latinoamérica",
+    color: "#003087",
+    specialties: ["Auto", "Vida", "Salud", "Empresarial"],
+  },
+  {
+    name: "Seguros Bolívar",
+    tagline: "Solidez y tradición al servicio de tu familia",
+    color: "#00813D",
+    specialties: ["Hogar", "Vida", "Auto", "Empresarial"],
+  },
+  {
+    name: "Allianz",
+    tagline: "La aseguradora global con presencia local",
+    color: "#003781",
+    specialties: ["Auto", "Salud", "Empresarial", "Hogar"],
+  },
+  {
+    name: "MAPFRE",
+    tagline: "Innovación y cobertura al mejor precio",
+    color: "#CC0000",
+    specialties: ["Auto", "Moto", "Hogar", "Salud"],
+  },
+  {
+    name: "HDI Seguros",
+    tagline: "Precisión y confiabilidad alemana",
+    color: "#005792",
+    specialties: ["Auto", "Hogar", "Empresarial"],
+  },
+  {
+    name: "AXA",
+    tagline: "Protección integral para cada etapa",
+    color: "#00008F",
+    specialties: ["Salud", "Vida", "Empresarial"],
+  },
+  {
+    name: "ZURICH",
+    tagline: "Experiencia global, servicio local",
+    color: "#0067B0",
+    specialties: ["Auto", "Empresarial", "Vida"],
+  },
+  {
+    name: "Colmena",
+    tagline: "Comprometidos con tu bienestar",
+    color: "#007AC3",
+    specialties: ["Salud", "ARL", "Vida"],
+  },
+];
+
+const benefits = [
+  "Acceso a +12 aseguradoras en una sola plataforma",
+  "Comparación objetiva sin favoritismos",
+  "Precios negociados por volumen",
+  "Asesoría experta e imparcial",
+  "Gestión centralizada de todas tus pólizas",
+];
+
+export default function Aseguradoras() {
+  return (
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <Navbar />
+
+      {/* Hero */}
+      <section className="bg-[#1F2937] py-20 text-center relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-1/4 w-64 h-64 bg-[#0057B8] rounded-full blur-3xl" />
+        </div>
+        <DotGrid opacity={0.35} />
+        <GlowOrbs />
+        <div className="container-wide relative">
+          <Reveal className="mb-5 flex justify-center"><Eyebrow label="Aseguradoras aliadas" icon={Award} tone="dark" /></Reveal>
+          <h1 className="font-manrope font-extrabold text-5xl text-white mb-4">
+            Las mejores aseguradoras<br />del país
+          </h1>
+          <p className="text-gray-300 font-inter text-lg max-w-xl mx-auto">
+            Trabajamos con más de 12 aseguradoras líderes para ofrecerte la mejor comparación de precios y coberturas.
+          </p>
+        </div>
+      </section>
+
+      {/* Benefits */}
+      <section className="bg-[#0057B8] py-12">
+        <div className="container-wide">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-8">
+            {benefits.map((b) => (
+              <div key={b} className="flex items-center gap-2 text-white text-sm font-inter">
+                <CheckCircle2 className="w-4 h-4 text-[#10B981] shrink-0" />
+                {b}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Partners Grid */}
+      <section className="section-padding bg-white">
+        <div className="container-wide">
+          <div className="text-center mb-12">
+            <h2 className="font-manrope font-extrabold text-4xl text-[#1F2937] mb-3">
+              Nuestras aseguradoras aliadas
+            </h2>
+            <p className="text-gray-500 font-inter text-lg">
+              Elegidas por su solidez, solvencia y calidad de servicio
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+            {partners.map(({ name, tagline, color, specialties }) => (
+              <div key={name} className="bg-[#F8FAFC] border border-[#E6E9ED] rounded-2xl p-6 flex gap-5 items-start hover:border-[#0057B8]/30 hover:shadow-md transition-all">
+                <div
+                  className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 text-white font-manrope font-extrabold text-sm"
+                  style={{ backgroundColor: color }}
+                >
+                  {name.split(" ")[0].substring(0, 3)}
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-manrope font-bold text-lg text-[#1F2937] mb-1">{name}</h3>
+                  <p className="text-gray-500 text-sm font-inter mb-3">{tagline}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {specialties.map((s) => (
+                      <span key={s} className="px-2.5 py-1 bg-blue-50 text-[#0057B8] text-xs font-inter font-medium rounded-lg">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-[#0057B8] py-16">
+        <div className="container-wide text-center">
+          <h2 className="font-manrope font-extrabold text-4xl text-white mb-4">
+            Compara todas en un solo lugar
+          </h2>
+          <p className="text-blue-200 font-inter text-lg mb-8">
+            Nosotros hacemos el trabajo de comparar por ti. Tú solo eliges la mejor opción.
+          </p>
+          <Link href="/cotizar">
+            <Button className="bg-[#10B981] hover:bg-[#059669] text-white rounded-xl px-8 h-12 text-base font-inter font-semibold">
+              Cotizar ahora <ArrowRight className="ml-2 w-4 h-4" />
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

@@ -1,0 +1,808 @@
+"use client";
+
+import Link from "next/link";
+import { waUrl } from "@/lib/whatsapp";
+import {
+  Car, Bike, Heart, Home, Building2, Activity, CheckCircle2, Scale,
+  Users, RefreshCw, Clock, ArrowRight, Phone, ChevronRight,
+  Star, MessageSquare, ShieldCheck, FileText, HeartHandshake,
+  UserCheck, BarChart3, BadgeCheck, Send, CreditCard,
+  Handshake, Award, Landmark, LifeBuoy
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import {
+  motion,
+  useInView,
+  useScroll,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
+import { useRef } from "react";
+
+/* ─── Animation Variants ─────────────────────────── */
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number], delay: i * 0.1 },
+  }),
+};
+
+const fadeIn = {
+  hidden: { opacity: 0 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    transition: { duration: 0.7, ease: "easeOut", delay: i * 0.1 },
+  }),
+};
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.92 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as [number, number, number, number], delay: i * 0.08 },
+  }),
+};
+
+/* ─── Scroll-triggered section wrapper ───────────── */
+function ScrollReveal({
+  children,
+  className = "",
+  variants = fadeUp,
+  custom = 0,
+  once = true,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  variants?: Variants;
+  custom?: number;
+  once?: boolean;
+}) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once, margin: "-80px 0px" });
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      variants={variants}
+      initial="hidden"
+      animate={inView ? "visible" : "hidden"}
+      custom={custom}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* ─── Data ────────────────────────────────────────── */
+const stats = [
+  { icon: Users, value: "+50.000", label: "Clientes protegidos" },
+  { icon: ShieldCheck, value: "+12", label: "Aseguradoras aliadas" },
+  { icon: RefreshCw, value: "98%", label: "Renovación de pólizas" },
+  { icon: Clock, value: "100%", label: "La mejor atención" },
+];
+
+const steps = [
+  { num: 1, icon: UserCheck, title: "Atención por un experto", desc: "Contáctanos y un asesor especializado te atenderá de forma inmediata y personalizada." },
+  { num: 2, icon: BarChart3, title: "Cotización y Comparativa", desc: "Tu asesor cotiza con las mejores aseguradoras y te presenta opciones con precios y coberturas para comparar." },
+  { num: 3, icon: BadgeCheck, title: "Elección de Póliza", desc: "Tú decides con tranquilidad cuál es la mejor opción según tus necesidades y presupuesto." },
+  { num: 4, icon: Send, title: "Gestión y Envío", desc: "El asesor gestiona toda la compra y te envía tu póliza directamente a tu correo electrónico." },
+];
+
+const insuranceCards = [
+  { label: "Auto", icon: Car, href: "/seguros/auto", desc: "Protege tu vehículo con cobertura todo riesgo, asistencia 24/7 y carro de reemplazo." },
+  { label: "Moto", icon: Bike, href: "/seguros/moto", desc: "Cobertura para todas las marcas y cilindrajes. Robo, accidentes y responsabilidad civil." },
+  { label: "Salud", icon: Activity, href: "/seguros/salud", desc: "Red de +1.000 clínicas, urgencias, hospitalización y medicina preventiva." },
+  { label: "Vida", icon: Heart, href: "/seguros/vida", desc: "Capital asegurado desde $50M para proteger el futuro financiero de tu familia." },
+  { label: "Hogar", icon: Home, href: "/seguros/hogar", desc: "Cubre tu vivienda ante incendio, robo, daños por agua y responsabilidad civil." },
+  { label: "Empresarial", icon: Building2, href: "/seguros/empresarial", desc: "Seguros para pymes y grandes empresas: activos, empleados y responsabilidad civil." },
+  { label: "Cumplimiento", icon: Scale, href: "/seguros/cumplimiento", desc: "Pólizas de garantía para contratos públicos y privados. Emisión en menos de 24 horas." },
+];
+
+const testimonials = [
+  {
+    name: "María Fernández",
+    role: "Empresaria",
+    avatar: "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg",
+    text: "Excelente servicio. En menos de 5 minutos obtuve cotizaciones de múltiples aseguradoras. El asesor me ayudó a elegir la mejor opción.",
+    rating: 5,
+  },
+  {
+    name: "Carlos Mendoza",
+    role: "Ingeniero",
+    avatar: "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg",
+    text: "Muy profesionales. Tengo mis seguros de auto y hogar con ellos. El proceso fue sencillo y el precio excelente.",
+    rating: 5,
+  },
+  {
+    name: "Laura Gómez",
+    role: "Médica",
+    avatar: "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg",
+    text: "Nunca pensé que conseguir un seguro de salud podría ser tan fácil. Súper recomendados.",
+    rating: 5,
+  },
+];
+
+const partners = [
+  { name: "Sura", color: "#003087" },
+  { name: "Allianz", color: "#003781" },
+  { name: "AXA Colpatria", color: "#00008F" },
+  { name: "Mapfre", color: "#CC0000" },
+  { name: "Seguros Bolívar", color: "#00813D" },
+  { name: "Liberty Seguros", color: "#F4A900" },
+  { name: "SBS Seguros", color: "#E63329" },
+  { name: "HDI Seguros", color: "#005792" },
+  { name: "Seguros del Estado", color: "#1A3A6B" },
+  { name: "Solidaria", color: "#5C2D91" },
+  { name: "Previsora", color: "#1A6B3C" },
+  { name: "Equidad", color: "#D4782A" },
+];
+
+const benefits = [
+  {
+    icon: Handshake,
+    title: "Asesoría Humana y Cercana",
+    desc: "Te atendemos personas reales, no algoritmos. Nuestros asesores especializados te escuchan, entienden tu situación y te guían para que tomes la mejor decisión con total confianza.",
+    tag: "Trato personalizado",
+    color: "bg-[#0057B8]",
+    lightBg: "bg-blue-50",
+  },
+  {
+    icon: Award,
+    title: "Respaldo de Élite",
+    desc: "Trabajamos con las aseguradoras líderes del país: SURA, Bolívar, Allianz, MAPFRE, HDI y más. Accedes a la mejor protección con la solidez de las marcas más reconocidas del sector.",
+    tag: "Top aseguradoras nacionales",
+    color: "bg-[#0057B8]",
+    lightBg: "bg-blue-50",
+  },
+  {
+    icon: Landmark,
+    title: "Gestión de Financiación",
+    desc: "El costo no debe ser un obstáculo. Te ayudamos a estructurar opciones de pago flexibles y financiación para que accedas a la cobertura que necesitas, sin comprometer tu presupuesto.",
+    tag: "Cuotas flexibles",
+    color: "bg-[#1F2937]",
+    lightBg: "bg-blue-50",
+  },
+  {
+    icon: LifeBuoy,
+    title: "Acompañamiento en Siniestros",
+    desc: "Cuando más nos necesitas, estamos ahí. Te guiamos paso a paso en el proceso de reclamación para que recibas tu indemnización de forma rápida, justa y sin contratiempos.",
+    tag: "Siempre a tu lado",
+    color: "bg-[#1F2937]",
+    lightBg: "bg-blue-50",
+  },
+];
+
+/* ─── Page ────────────────────────────────────────── */
+export default function Index() {
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+
+  return (
+    <div className="min-h-screen bg-[#F8FAFC] overflow-x-hidden">
+      <Navbar />
+
+      {/* ── HERO ──────────────────────────────────────── */}
+      <section ref={heroRef} className="relative min-h-[92vh] flex items-center overflow-hidden">
+        {/* Parallax background */}
+        <motion.div className="absolute inset-0 z-0" style={{ y: heroY }}>
+          <img
+            className="w-full h-full object-cover scale-110"
+            src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_5be98b1163_f709feb41b2cb834.png"
+            alt="professional insurance concept, modern city skyline at dusk, happy family in foreground, car, home"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#001f4d]/80 via-[#0057B8]/40 to-black/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#001133]/70 via-transparent to-transparent" />
+          {/* Animated blue glow orbs */}
+          <motion.div
+            className="absolute top-24 right-32 w-80 h-80 bg-[#0057B8]/20 rounded-full blur-3xl pointer-events-none"
+            animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.65, 0.4] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute bottom-20 left-16 w-96 h-96 bg-[#003f8a]/25 rounded-full blur-3xl pointer-events-none"
+            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.55, 0.3] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          />
+        </motion.div>
+
+        <motion.div
+          className="container-wide relative z-20 py-24 md:py-32"
+          style={{ opacity: heroOpacity }}
+        >
+          <div className="max-w-3xl">
+            {/* Badge */}
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={0}
+              className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/30 text-white text-sm font-inter font-medium px-4 py-2 rounded-full mb-8"
+            >
+              <CheckCircle2 className="w-4 h-4 text-[#4DA3FF]" />
+              +50.000 clientes protegidos confían en nosotros
+            </motion.div>
+
+            {/* Heading */}
+            <motion.h1
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={1}
+              className="font-manrope font-extrabold text-5xl md:text-7xl text-white leading-[1.08] mb-6 drop-shadow-lg"
+            >
+              Protegemos lo<br />
+              <span
+                className="relative inline-block"
+                style={{
+                  background: "linear-gradient(135deg, #4DA3FF 0%, #0057B8 50%, #7BC4FF 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                que construyes
+              </span>
+            </motion.h1>
+
+            {/* Subheading */}
+            <motion.p
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={2}
+              className="text-white/80 text-xl font-inter leading-relaxed max-w-xl mb-10"
+            >
+              Somos tu aliado de confianza en seguros. Asesoría experta y personalizada para proteger lo que más valoras.
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={3}
+              className="flex flex-wrap items-center gap-4 mb-12"
+            >
+              <a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                >
+                  <Button className="bg-[#0057B8] hover:bg-[#004a9e] text-white rounded-xl px-8 py-4 text-base font-inter font-semibold h-auto shadow-2xl shadow-blue-900/50 transition-colors duration-200">
+                    <Phone className="mr-2 w-5 h-5" /> Hablar con un asesor
+                  </Button>
+                </motion.div>
+              </a>
+              <Link href="/nosotros">
+                <motion.div
+                  whileHover={{ scale: 1.04, y: -1 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                >
+                  <Button variant="outline" className="bg-transparent backdrop-blur-sm border-white/40 text-white hover:bg-white/20 rounded-xl px-8 py-4 text-base font-inter h-auto transition-colors duration-200">
+                    Conoce más <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </motion.div>
+              </Link>
+            </motion.div>
+
+            {/* Trust badges */}
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={4}
+              className="flex flex-wrap items-center gap-6 text-sm font-inter"
+            >
+              {[
+                { icon: ShieldCheck, text: "Asesoría personalizada" },
+                { icon: CheckCircle2, text: "Mejores aseguradoras" },
+                { icon: Clock, text: "La mejor atención" },
+              ].map(({ icon: Icon, text }) => (
+                <span key={text} className="flex items-center gap-2 text-white/75">
+                  <span className="w-7 h-7 bg-white/15 rounded-full flex items-center justify-center">
+                    <Icon className="w-3.5 h-3.5 text-[#4DA3FF]" />
+                  </span>
+                  {text}
+                </span>
+              ))}
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Stats bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.9, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
+          className="absolute bottom-0 left-0 right-0 z-20 bg-white/10 backdrop-blur-md border-t border-white/20"
+        >
+          <div className="container-wide py-5">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {stats.map(({ icon: Icon, value, label }, i) => (
+                <motion.div
+                  key={label}
+                  className="flex items-center gap-3"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 1.1 + i * 0.1 }}
+                >
+                  <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center shrink-0">
+                    <Icon className="w-5 h-5 text-[#4DA3FF]" />
+                  </div>
+                  <div>
+                    <div className="font-manrope font-extrabold text-white text-xl leading-none">{value}</div>
+                    <div className="text-white/60 text-xs font-inter mt-0.5">{label}</div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ── PARTNERS BANNER ──────────────────────────── */}
+      <section className="bg-white border-y border-[#E6E9ED] py-8 overflow-hidden">
+        <ScrollReveal>
+          <p className="text-center text-sm font-inter text-gray-400 mb-6 font-medium">
+            Trabajamos con las mejores aseguradoras del país
+          </p>
+        </ScrollReveal>
+        <div className="relative w-full overflow-hidden">
+          <div className="absolute left-0 top-0 h-full w-20 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 h-full w-20 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+          <div
+            className="flex items-center gap-0"
+            style={{
+              animation: "partners-scroll 28s linear infinite",
+              width: "max-content",
+            }}
+          >
+            {[...partners, ...partners].map((p, i) => (
+              <div key={i} className="flex items-center gap-3 mx-8 shrink-0">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-manrope font-extrabold text-xs shrink-0"
+                  style={{ backgroundColor: p.color }}
+                >
+                  {p.name.split(" ")[0].substring(0, 3).toUpperCase()}
+                </div>
+                <span className="font-manrope font-bold text-base text-gray-500 whitespace-nowrap">
+                  {p.name}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── INSURANCE CATEGORIES ─────────────────────── */}
+      <section className="section-padding bg-[#F8FAFC]">
+        <div className="container-wide">
+          <ScrollReveal className="text-center mb-12">
+            <h2 className="font-manrope font-extrabold text-4xl text-[#1F2937] mb-3">
+              Categorías de seguros
+            </h2>
+            <p className="text-gray-500 font-inter text-lg">Encuentra el seguro ideal para cada etapa de tu vida</p>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {insuranceCards.map(({ label, icon: Icon, href, desc }, i) => (
+              <ScrollReveal key={label} custom={i} variants={scaleIn}>
+                <Link
+                  href={href}
+                  className="block h-full"
+                >
+                  <motion.div
+                    className="group bg-white border border-[#E6E9ED] rounded-2xl p-6 h-full cursor-pointer relative overflow-hidden"
+                    whileHover={{ y: -6, boxShadow: "0 20px 50px -12px rgba(0,87,184,0.18)", borderColor: "rgba(0,87,184,0.35)" }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 22 }}
+                  >
+                    {/* Subtle gradient on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-50/0 to-blue-50/0 group-hover:from-blue-50/60 group-hover:to-transparent transition-all duration-400 rounded-2xl pointer-events-none" />
+
+                    <motion.div
+                      className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4"
+                      whileHover={{ scale: 1.12, backgroundColor: "#0057B8" }}
+                      transition={{ duration: 0.25 }}
+                    >
+                      <Icon className="w-6 h-6 text-[#0057B8] group-hover:text-white transition-colors duration-200" />
+                    </motion.div>
+                    <h3 className="font-manrope font-bold text-lg text-[#1F2937] mb-1">Seguro de {label}</h3>
+                    <p className="text-gray-500 text-sm font-inter leading-relaxed">{desc}</p>
+                    <div className="flex items-center gap-1 mt-4 text-[#0057B8] text-sm font-inter font-medium">
+                      Ver más
+                      <motion.span
+                        className="inline-flex"
+                        whileHover={{ x: 4 }}
+                        transition={{ type: "spring", stiffness: 400 }}
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </motion.span>
+                    </div>
+                  </motion.div>
+                </Link>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ─────────────────────────────── */}
+      <section className="section-padding bg-white">
+        <div className="container-wide">
+          <ScrollReveal className="text-center mb-12">
+            <span className="inline-block bg-blue-50 text-[#0057B8] text-sm font-inter font-semibold px-4 py-1.5 rounded-full mb-4">
+              Atención 100% personalizada
+            </span>
+            <h2 className="font-manrope font-extrabold text-4xl text-[#1F2937] mb-3">
+              Tu asesor te acompaña en cada paso
+            </h2>
+            <p className="text-gray-500 font-inter text-lg max-w-xl mx-auto">
+              No estás solo. Un experto en seguros te guía desde el primer contacto hasta que recibes tu póliza.
+            </p>
+          </ScrollReveal>
+
+          <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Connector line */}
+            <div className="hidden lg:block absolute top-[26px] left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-[#0057B8]/20 via-[#0057B8]/50 to-[#0057B8]/20 z-0" />
+
+            {steps.map(({ num, icon: Icon, title, desc }, i) => (
+              <ScrollReveal key={num} custom={i} variants={scaleIn} className="relative z-10">
+                <motion.div
+                  className="flex flex-col items-start bg-[#F8FAFC] border border-[#E6E9ED] rounded-2xl p-6 relative h-full"
+                  whileHover={{
+                    y: -8,
+                    boxShadow: "0 24px 48px -12px rgba(0,87,184,0.16)",
+                    borderColor: "rgba(0,87,184,0.3)",
+                  }}
+                  transition={{ type: "spring", stiffness: 300, damping: 22 }}
+                >
+                  {/* Step number badge */}
+                  <motion.div
+                    className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-[#0057B8] text-white text-sm font-bold flex items-center justify-center font-inter shadow-lg shadow-blue-900/30"
+                    whileHover={{ scale: 1.2, rotate: 10 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                  >
+                    {num}
+                  </motion.div>
+                  <div className="w-12 h-12 bg-white border border-[#E6E9ED] rounded-xl flex items-center justify-center mb-4 shadow-sm group-hover:bg-blue-50 transition-colors">
+                    <Icon className="w-6 h-6 text-[#0057B8]" />
+                  </div>
+                  <h3 className="font-manrope font-bold text-[#1F2937] text-base mb-2">{title}</h3>
+                  <p className="text-gray-500 text-sm font-inter leading-relaxed">{desc}</p>
+                </motion.div>
+              </ScrollReveal>
+            ))}
+          </div>
+
+          {/* Advisor CTA */}
+          <ScrollReveal className="mt-14">
+            <div className="bg-[#F8FAFC] rounded-2xl border border-[#E6E9ED] p-8 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              <div>
+                <h3 className="font-manrope font-extrabold text-2xl text-[#1F2937] mb-3">
+                  ¿Listo para hablar con tu asesor?
+                </h3>
+                <p className="text-gray-500 font-inter text-base leading-relaxed mb-6">
+                  Nuestros expertos están disponibles para atenderte de forma inmediata, sin filas ni esperas. Tu asesor personal te guía hasta que tengas tu póliza.
+                </p>
+                <a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                  <motion.div
+                    whileHover={{ scale: 1.04, y: -2 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                    className="inline-block"
+                  >
+                    <Button className="bg-[#0057B8] hover:bg-[#004a9e] text-white rounded-xl px-6 h-11 font-inter shadow-lg shadow-blue-900/20 transition-colors duration-200">
+                      <Phone className="mr-2 w-4 h-4" /> Hablar con un asesor
+                    </Button>
+                  </motion.div>
+                </a>
+              </div>
+              <div className="relative h-52 md:h-64 rounded-xl overflow-hidden">
+                <img
+                  className="w-full h-full object-cover"
+                  src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_47f3ada767_16494bc4dcb74201.png"
+                  alt="friendly professional female insurance advisor smiling at desk, modern office, warm lighting, trust"
+                />
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ── FINANCING BANNER ─────────────────────────── */}
+      <ScrollReveal>
+        <section className="py-10 relative overflow-hidden" style={{ background: "linear-gradient(135deg, #003f8a 0%, #0057B8 45%, #0077e6 100%)" }}>
+          {/* Animated shimmer */}
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.06) 50%, transparent 60%)" }}
+            animate={{ x: ["-100%", "200%"] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear", repeatDelay: 3 }}
+          />
+          <div className="container-wide relative z-10">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="flex items-start gap-5">
+                <div className="w-14 h-14 bg-white/15 rounded-2xl flex items-center justify-center shrink-0 border border-white/20">
+                  <CreditCard className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <div className="inline-flex items-center gap-1.5 bg-white/20 text-white text-xs font-inter font-semibold px-3 py-1 rounded-full mb-2">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> Beneficio exclusivo
+                  </div>
+                  <h3 className="font-manrope font-extrabold text-xl md:text-2xl text-white mb-1">
+                    ¿Necesitas financiar tu póliza?
+                  </h3>
+                  <p className="text-blue-100 font-inter text-sm md:text-base leading-relaxed max-w-lg">
+                    Si el costo del seguro es una preocupación, ¡te ayudamos! Ofrecemos opciones de <strong className="text-white">financiación flexible</strong> para que puedas pagar tu póliza en cuotas cómodas.
+                  </p>
+                </div>
+              </div>
+              <div className="shrink-0">
+                <a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                  <motion.div
+                    whileHover={{ scale: 1.06, y: -2 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                    className="inline-block"
+                  >
+                    <Button className="bg-white text-[#0057B8] hover:bg-blue-50 rounded-xl px-7 h-12 font-inter font-semibold text-sm shadow-xl shadow-blue-900/30 whitespace-nowrap transition-colors duration-200">
+                      <Phone className="mr-2 w-4 h-4" /> Consultar financiación
+                    </Button>
+                  </motion.div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* ── WHY CHOOSE US ────────────────────────────── */}
+      <section className="section-padding bg-[#F8FAFC]">
+        <div className="container-wide">
+          <ScrollReveal className="text-center mb-14">
+            <span className="inline-block bg-blue-50 text-[#0057B8] text-sm font-inter font-semibold px-4 py-1.5 rounded-full mb-4">
+              Nuestra diferencia
+            </span>
+            <h2 className="font-manrope font-extrabold text-4xl text-[#1F2937] mb-3">¿Por qué elegirnos?</h2>
+            <p className="text-gray-500 font-inter text-lg max-w-xl mx-auto">
+              No somos una plataforma automatizada. Somos un equipo de expertos comprometidos con tu protección real.
+            </p>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {benefits.map(({ icon: Icon, title, desc, tag, color, lightBg }, i) => (
+              <ScrollReveal key={title} custom={i} variants={scaleIn}>
+                <motion.div
+                  className="group relative bg-white rounded-2xl border border-[#E6E9ED] shadow-sm overflow-hidden flex flex-col h-full"
+                  whileHover={{
+                    y: -8,
+                    boxShadow: "0 28px 56px -14px rgba(0,87,184,0.18)",
+                    borderColor: "rgba(0,87,184,0.25)",
+                  }}
+                  transition={{ type: "spring", stiffness: 280, damping: 22 }}
+                >
+                  {/* Top accent bar with gradient */}
+                  <div className={`h-1 w-full ${color}`} style={{ background: i < 2 ? "linear-gradient(90deg, #003f8a, #0077e6)" : "linear-gradient(90deg, #1F2937, #374151)" }} />
+
+                  <div className="p-7 flex flex-col flex-1">
+                    <motion.div
+                      className={`w-14 h-14 ${lightBg} rounded-2xl flex items-center justify-center mb-5`}
+                      whileHover={{ scale: 1.12, rotate: -4 }}
+                      transition={{ type: "spring", stiffness: 400 }}
+                    >
+                      <Icon className="w-7 h-7 text-[#0057B8]" />
+                    </motion.div>
+
+                    <span className="inline-flex items-center gap-1.5 text-xs font-inter font-semibold text-[#0057B8] bg-blue-50 px-2.5 py-1 rounded-full mb-3 w-fit">
+                      <CheckCircle2 className="w-3 h-3" />
+                      {tag}
+                    </span>
+
+                    <h3 className="font-manrope font-extrabold text-[#1F2937] text-lg leading-snug mb-3">{title}</h3>
+                    <p className="text-gray-500 text-sm font-inter leading-relaxed flex-1">{desc}</p>
+                  </div>
+                </motion.div>
+              </ScrollReveal>
+            ))}
+          </div>
+
+          {/* Bottom trust strip */}
+          <ScrollReveal className="mt-12">
+            <div
+              className="rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6"
+              style={{ background: "linear-gradient(135deg, #003f8a 0%, #0057B8 50%, #0077e6 100%)" }}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white/15 rounded-xl flex items-center justify-center shrink-0 border border-white/20">
+                  <ShieldCheck className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <p className="font-manrope font-extrabold text-white text-xl">Un equipo humano, siempre a tu lado</p>
+                  <p className="text-blue-100 font-inter text-sm mt-0.5">
+                    Desde la asesoría inicial hasta el acompañamiento en siniestros — personas reales, no bots.
+                  </p>
+                </div>
+              </div>
+              <a href={waUrl()} target="_blank" rel="noopener noreferrer" className="shrink-0">
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="inline-block"
+                >
+                  <Button className="bg-white text-[#0057B8] hover:bg-blue-50 rounded-xl px-7 h-11 font-inter font-semibold text-sm shadow-lg whitespace-nowrap transition-colors duration-200">
+                    <Phone className="mr-2 w-4 h-4" /> Hablar con un asesor
+                  </Button>
+                </motion.div>
+              </a>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ── TESTIMONIALS ─────────────────────────────── */}
+      <section className="section-padding bg-white">
+        <div className="container-wide">
+          <ScrollReveal className="text-center mb-12">
+            <h2 className="font-manrope font-extrabold text-4xl text-[#1F2937] mb-3">Lo que dicen nuestros clientes</h2>
+            <p className="text-gray-500 font-inter text-lg">Más de 50.000 clientes satisfechos nos respaldan</p>
+          </ScrollReveal>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map(({ name, role, avatar, text, rating }, i) => (
+              <ScrollReveal key={name} custom={i} variants={scaleIn}>
+                <motion.div
+                  className="bg-[#F8FAFC] rounded-2xl p-6 border border-[#E6E9ED] h-full"
+                  whileHover={{
+                    y: -5,
+                    boxShadow: "0 16px 40px -8px rgba(0,87,184,0.12)",
+                    borderColor: "rgba(0,87,184,0.2)",
+                  }}
+                  transition={{ type: "spring", stiffness: 300, damping: 22 }}
+                >
+                  <div className="flex items-center gap-1 mb-4">
+                    {Array.from({ length: rating }).map((_, idx) => (
+                      <motion.span
+                        key={idx}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.3 + idx * 0.06, type: "spring" }}
+                      >
+                        <Star className="w-4 h-4 fill-[#F59E0B] text-[#F59E0B]" />
+                      </motion.span>
+                    ))}
+                  </div>
+                  <p className="text-gray-600 font-inter text-sm leading-relaxed mb-5">"{text}"</p>
+                  <div className="flex items-center gap-3">
+                    <img src={avatar} alt={name} className="w-10 h-10 rounded-full object-cover" />
+                    <div>
+                      <div className="font-manrope font-semibold text-[#1F2937] text-sm">{name}</div>
+                      <div className="text-gray-400 text-xs font-inter">{role}</div>
+                    </div>
+                  </div>
+                </motion.div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ CTA BANNER ───────────────────────────── */}
+      <section className="section-padding bg-[#F8FAFC]">
+        <div className="container-wide">
+          <ScrollReveal>
+            <motion.div
+              className="bg-white border border-[#E6E9ED] rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6"
+              whileHover={{ boxShadow: "0 12px 32px -8px rgba(0,87,184,0.1)" }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center shrink-0">
+                  <MessageSquare className="w-6 h-6 text-[#0057B8]" />
+                </div>
+                <div>
+                  <h3 className="font-manrope font-extrabold text-2xl text-[#1F2937] mb-1">¿Tienes alguna duda?</h3>
+                  <p className="text-gray-500 font-inter text-base">Consulta nuestras preguntas frecuentes y resuelve tus dudas de forma rápida.</p>
+                </div>
+              </div>
+              <Link href="/faq" className="shrink-0">
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="inline-block"
+                >
+                  <Button className="bg-[#0057B8] hover:bg-[#004a9e] text-white rounded-xl px-7 h-11 font-inter font-semibold shadow-lg shadow-blue-900/15 transition-colors duration-200">
+                    Ver preguntas frecuentes <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </motion.div>
+              </Link>
+            </motion.div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ── FINAL CTA ────────────────────────────────── */}
+      <section className="relative py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            className="w-full h-full object-cover"
+            src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_f0520035d8_bbcfcd16fb92eefa.png"
+            alt="modern city skyline at dusk, warm golden hour light, professional insurance concept, panoramic urban"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#001133]/80 via-[#0057B8]/50 to-black/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#001133]/70 via-transparent to-transparent" />
+        </div>
+        {/* Animated orbs */}
+        <motion.div
+          className="absolute top-0 right-0 w-96 h-96 bg-[#0057B8]/15 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
+          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute bottom-0 left-0 w-80 h-80 bg-[#003f8a]/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl pointer-events-none"
+          animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.5, 0.3] }}
+          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+        />
+
+        <div className="container-wide relative z-10 text-center">
+          <ScrollReveal>
+            <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/25 text-white text-sm font-inter font-medium px-4 py-2 rounded-full mb-8">
+              <ShieldCheck className="w-4 h-4 text-[#4DA3FF]" />
+              Tu tranquilidad, nuestra prioridad
+            </div>
+          </ScrollReveal>
+          <ScrollReveal custom={1}>
+            <h2 className="font-manrope font-extrabold text-4xl md:text-5xl text-white mb-5 leading-tight">
+              ¿Listo para proteger<br />lo que más valoras?
+            </h2>
+          </ScrollReveal>
+          <ScrollReveal custom={2}>
+            <p className="text-blue-200 font-inter text-lg mb-10 max-w-xl mx-auto leading-relaxed">
+              Habla con nuestros asesores expertos y encuentra el seguro perfecto para ti y tu familia.
+            </p>
+          </ScrollReveal>
+          <ScrollReveal custom={3}>
+            <div className="flex flex-wrap justify-center gap-4">
+              <a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                <motion.div
+                  whileHover={{ scale: 1.06, y: -3 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="inline-block"
+                >
+                  <Button className="bg-[#0057B8] hover:bg-[#004a9e] text-white rounded-xl px-8 h-12 text-base font-inter font-semibold shadow-2xl shadow-blue-900/40 transition-colors duration-200">
+                    <Phone className="mr-2 w-4 h-4" /> Hablar con un asesor
+                  </Button>
+                </motion.div>
+              </a>
+              <Link href="/contacto">
+                <motion.div
+                  whileHover={{ scale: 1.04, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="inline-block"
+                >
+                  <Button variant="outline" className="bg-transparent border-white/50 text-white hover:bg-white/15 rounded-xl px-8 h-12 text-base font-inter transition-colors duration-200">
+                    Contáctanos <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </motion.div>
+              </Link>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

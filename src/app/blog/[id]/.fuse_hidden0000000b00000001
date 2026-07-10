@@ -1,0 +1,158 @@
+"use client";
+
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { waUrl } from "@/lib/whatsapp";
+import { ArrowLeft, Clock, Tag, Calendar, Share2, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { ENABLE_QUOTER } from "@/lib/flags";
+import { waUrl } from "@/lib/whatsapp";
+
+const articles: Record<string, {
+  title: string;
+  category: string;
+  date: string;
+  readTime: string;
+  author: string;
+  authorAvatar: string;
+  img_url: string;
+  content: string[];
+}> = {
+  "1": {
+    title: "¿Cómo elegir el mejor seguro de auto en Colombia?",
+    category: "Auto",
+    date: "12 enero, 2026",
+    readTime: "5 min",
+    author: "Valentina Torres",
+    authorAvatar: "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-6.jpg",
+    img_url: "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_2045185570_f1920a5c46152723.png",
+    content: [
+      "Elegir el seguro de auto adecuado es una de las decisiones financieras más importantes para cualquier propietario de vehículo en Colombia. Con tantas opciones disponibles en el mercado, puede ser difícil saber por dónde empezar.",
+      "Lo primero que debes tener claro es la diferencia entre el SOAT (Seguro Obligatorio de Accidentes de Tránsito) y el seguro voluntario de auto. El SOAT es obligatorio y cubre lesiones a personas en accidentes, mientras que el seguro voluntario protege tu vehículo y amplía la responsabilidad civil.",
+      "Al comparar seguros, considera estos factores clave: tipo de cobertura (todo riesgo vs. básico), valor asegurado, deducibles, red de talleres aliados, tiempo de respuesta ante siniestros y precio de la prima mensual o anual.",
+      "Un seguro todo riesgo es más costoso pero cubre prácticamente cualquier eventualidad. Un seguro básico o de terceros es más económico pero solo cubre responsabilidad civil y algunas coberturas limitadas.",
+      "En Llano Seguros te ayudamos a comparar todas las opciones disponibles de más de 12 aseguradoras en un solo lugar, para que puedas tomar la decisión más informada y obtener el mejor precio.",
+    ],
+  },
+  "2": {
+    title: "Todo lo que debes saber sobre el seguro de vida",
+    category: "Vida",
+    date: "8 enero, 2026",
+    readTime: "6 min",
+    author: "Alejandro Llano",
+    authorAvatar: "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-4.jpg",
+    img_url: "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_11cac4908a_71b68fbe451155e1.png",
+    content: [
+      "El seguro de vida es posiblemente la herramienta financiera más poderosa para proteger el futuro de tu familia. Sin embargo, muchos colombianos lo postergan pensando que es costoso o que es solo para personas mayores.",
+      "La realidad es que cuanto más joven contratas un seguro de vida, más económica es la prima. Esto se debe a que el riesgo calculado por las aseguradoras es menor en personas jóvenes y saludables.",
+      "Existen diferentes tipos de seguros de vida: temporal, permanente y con componente de ahorro. Cada uno tiene ventajas específicas según tus objetivos financieros y etapa de vida.",
+      "Al contratar un seguro de vida, debes definir claramente la suma asegurada. Una regla general es que sea al menos 10 veces tu ingreso anual, para que tus beneficiarios puedan mantener su nivel de vida por al menos una década.",
+      "En Colombia, el seguro de vida también puede cubrir enfermedades graves como cáncer, infarto o ACV, permitiendo un anticipo del capital asegurado para cubrir gastos médicos y mantener la calidad de vida.",
+    ],
+  },
+};
+
+const defaultArticle = {
+  title: "Consejos para elegir el seguro ideal",
+  category: "Consejos",
+  date: "20 diciembre, 2025",
+  readTime: "5 min",
+  author: "Equipo Llano Seguros",
+  authorAvatar: "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-7.jpg",
+  img_url: "https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_4591e15e71_bd62d7b54c35589d.png",
+  content: [
+    "Elegir el seguro correcto requiere conocer tus necesidades específicas, comparar opciones y contar con asesoría profesional.",
+    "En Llano Seguros, nuestros asesores expertos están disponibles para acompañarte en cada paso del proceso.",
+    "Recuerda que el seguro más barato no siempre es el mejor. La cobertura y el servicio de la aseguradora son igual de importantes que el precio.",
+    "Cotiza gratis hoy y descubre cuánto puedes ahorrar mientras obtienes la mejor protección del mercado.",
+  ],
+};
+
+export default function BlogDetail() {
+  const { id } = useParams<{ id: string }>();
+  const article = (id && articles[id]) ? articles[id] : defaultArticle;
+
+  return (
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <Navbar />
+
+      <article className="section-padding">
+        <div className="container-wide">
+          <div className="max-w-3xl mx-auto">
+            {/* Back */}
+            <Link href="/blog" className="inline-flex items-center gap-2 text-[#0057B8] text-sm font-inter font-medium mb-6 hover:gap-3 transition-all">
+              <ArrowLeft className="w-4 h-4" /> Volver al blog
+            </Link>
+
+            {/* Meta */}
+            <div className="flex items-center gap-3 mb-4 flex-wrap">
+              <span className="flex items-center gap-1 text-sm font-inter font-medium text-[#0057B8] bg-blue-50 px-3 py-1.5 rounded-full">
+                <Tag className="w-3 h-3" /> {article.category}
+              </span>
+              <span className="flex items-center gap-1 text-sm text-gray-400 font-inter">
+                <Calendar className="w-3 h-3" /> {article.date}
+              </span>
+              <span className="flex items-center gap-1 text-sm text-gray-400 font-inter">
+                <Clock className="w-3 h-3" /> {article.readTime} de lectura
+              </span>
+            </div>
+
+            {/* Title */}
+            <h1 className="font-manrope font-extrabold text-4xl md:text-5xl text-[#1F2937] leading-tight mb-6">
+              {article.title}
+            </h1>
+
+            {/* Author */}
+            <div className="flex items-center gap-3 mb-8 pb-8 border-b border-[#E6E9ED]">
+              <img src={article.authorAvatar} alt={article.author} className="w-10 h-10 rounded-full object-cover" />
+              <div>
+                <div className="font-manrope font-semibold text-[#1F2937] text-sm">{article.author}</div>
+                <div className="text-gray-400 text-xs font-inter">Equipo Llano Seguros</div>
+              </div>
+              <Button variant="outline" size="sm" className="ml-auto border-[#E6E9ED] text-gray-500 rounded-xl font-inter text-xs">
+                <Share2 className="w-3 h-3 mr-1" /> Compartir
+              </Button>
+            </div>
+
+            {/* Hero Image */}
+            <div className="relative h-64 md:h-96 rounded-2xl overflow-hidden mb-8">
+              <img src={article.img_url} alt={article.title} className="w-full h-full object-cover" />
+            </div>
+
+            {/* Content */}
+            <div className="prose max-w-none space-y-5 mb-12">
+              {article.content.map((paragraph, i) => (
+                <p key={i} className="text-gray-600 font-inter text-base leading-relaxed">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <div className="bg-[#F8FAFC] border border-[#E6E9ED] rounded-2xl p-6 md:p-8 text-center">
+              <h3 className="font-manrope font-bold text-2xl text-[#1F2937] mb-2">
+                ¿Listo para protegerte?
+              </h3>
+              <p className="text-gray-500 font-inter mb-5">
+                Cotiza gratis en menos de 1 minuto y compara las mejores opciones.
+              </p>
+              {ENABLE_QUOTER ? (<Link href="/cotizar">
+                <Button className="bg-[#0057B8] hover:bg-[#004a9e] text-white rounded-xl px-8 h-11 font-inter">
+                  Cotizar ahora <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </Link>) : (<a href={waUrl()} target="_blank" rel="noopener noreferrer">
+                <Button className="bg-[#0057B8] hover:bg-[#004a9e] text-white rounded-xl px-8 h-11 font-inter">
+                  Cotizar ahora <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </a>)}
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <Footer />
+    </div>
+  );
+}
