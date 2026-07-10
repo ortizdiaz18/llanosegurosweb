@@ -35,6 +35,11 @@ next-env.d.ts
 # almacén de contenido local del admin
 /.data
 
+# cloudflare / opennext
+/.open-next
+.wrangler
+cloudflare-env.d.ts
+
 
 # local env files
 .env*.local

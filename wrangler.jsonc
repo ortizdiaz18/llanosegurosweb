@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "llano-seguros-next",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-03-25",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  }
+  // Cuando agreguemos D1 (base de datos) y R2 (imágenes) para el panel /admin,
+  // sus bindings van aquí. Ej:
+  // "d1_databases": [{ "binding": "DB", "database_name": "llano", "database_id": "..." }],
+  // "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "llano-media" }]
+}
